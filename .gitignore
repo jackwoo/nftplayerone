@@ -1,0 +1,57 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+
+# Backend
+# dependencies
+backend/node_modules
+backend/.pnp
+backend/.pnp.js
+
+backend/package-lock.json
+backend/yarn.lock
+backend/yarn-error.log
+backend/.env
+
+backend/public
+backend/uploads
+
+# frontend
+# dependencies
+frontend/node_modules
+frontend/.pnp
+frontend/.pnp.js
+
+# testing
+frontend/coverage
+
+# production
+frontend/build
+
+# misc
+frontend/.DS_Store
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend.env.production
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/package-lock.json
+frontend/dist
+frontend/.eslintcache
+
+# contract
+# dependencies
+contracts/node_modules
+
+# production
+contracts/build
+
+# misc
+contracts/trffle-config.js
+contracts/package-lock.json
+contracts/contracts/.placeholder
+contracts/test/.placeholder
+

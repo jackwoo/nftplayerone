@@ -1,0 +1,411 @@
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Testing CSS */
+
+.nav-search-bar-container {
+  -webkit-box-align: center;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(229, 232, 235);
+  border-radius: 5px;
+  color: rgba(14, 14, 14, 0.75);
+  display: flex;
+  flex: 1 0 0%;
+  height: 45px;
+  max-width: 768px;
+  padding: 0px 10px;
+  margin-top: 10px;
+  width: 300px;
+}
+
+.nav-search-bar-input {
+  background-color: transparent;
+  color: rgba(14, 14, 14, 0.75);
+  border: none;
+  flex: 1 0 0%;
+  height: 100%;
+  margin-left: 16px;
+  outline: none;
+}
+
+.nav-image-rounded {
+  -webkit-box-align: center;
+  align-items: center;
+  display: flex !important;
+  height: 100% !important;
+  padding: 0px 20px !important;
+  position: relative !important;
+  width: 100%;
+}
+
+.rounded-image-container {
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+  -webkit-box-align: center;
+  align-items: center;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  max-height: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.featured-background-container {
+  width: 100%;
+  position: absolute;
+  top: 65px;
+  overflow: hidden;
+}
+
+.featured-background {
+  height: 600px;
+  background-size: cover;
+  background-color: rgb(255, 255, 255);
+  background-position: center center;
+  opacity: 0.1;
+  filter: blur(8px);
+  display: flex;
+  background-image: url("https://miro.medium.com/max/3864/1*YS9MGZ3RR_9NwW4hpwAL7A.png");
+}
+
+.home-featured-section {
+  padding: 60px 20px 44px 30px;
+}
+
+.home-featured-section .featured-title {
+  font-size: 32px;
+  color: #313131;
+  font-weight: 600;
+}
+
+.home-featured-section .featured-subtitle {
+  margin-top: 20px;
+  margin-bottom: 40px;
+  font-size: 22px;
+  color: #313131;
+}
+
+.home-featured-section .featured-btn {
+  height: auto;
+  width: 120px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: 20px;
+}
+
+@media (max-width: 992px) {
+  .featured-background-container {
+    top: 65px;
+  }
+  .home-featured-section {
+    padding: 60px 20px 44px 30px;
+    text-align: center;
+  }
+  .home-featured-section .featured-btn {
+    margin-bottom: 60px;
+  }
+}
+
+.wallet-btn {
+  height: auto;
+  padding-left: 15px;
+  display: inline-flex;
+  -webkit-box-align: center;
+  align-items: center;
+  font-size: 100%;
+}
+
+.wallet-icon-container {
+  align-self: center;
+  order: 2;
+  margin-right: 16px;
+  overflow: hidden;
+}
+
+.wallet-icon {
+  height: 24px;
+  width: 24px;
+  object-fit: contain;
+}
+
+.wallet-label-container {
+  align-self: stretch;
+  flex: 1 1 auto;
+  flex-flow: column;
+  -webkit-box-pack: center;
+  justify-content: center;
+  margin-right: 16px;
+  order: 3;
+  overflow: hidden;
+  font-size: 16px;
+  align-items: flex-start;
+}
+
+.wallet-label {
+  color: rgb(53, 56, 64);
+  font-size: 14px;
+}
+
+.balance-list {
+  list-style: none;
+  margin: 10px 20px;
+  padding: 0;
+}
+
+.balance-container {
+  height: auto;
+  width: 100%;
+  display: flex;
+  padding: 16px;
+}
+
+.balance-currency-icon-container {
+  overflow: hidden;
+  border: 1px solid rgb(229, 232, 235);
+  border-radius: 50%;
+  padding: 8px;
+  align-self: center;
+  order: 1;
+  margin-right: 16px;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 40px;
+  height: 40px;
+}
+
+.balance-currency-icon {
+  object-fit: contain;
+  width: 24px;
+  height: 24px;
+}
+
+.balance-currency-container {
+  align-self: stretch;
+  flex: 1 1 auto;
+  flex-flow: column;
+  -webkit-box-pack: center;
+  justify-content: center;
+  margin-right: 16px;
+  order: 2;
+  overflow: hidden;
+  font-size: 16px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.balance-currency-label {
+  width: fit-content;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.balance-currency-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgb(138, 147, 155);
+  margin: 0;
+}
+
+.balance-amount-container {
+  align-self: stretch;
+  display: flex;
+  flex: 0 0 auto;
+  flex-flow: column;
+  -webkit-box-pack: center;
+  justify-content: center;
+  max-width: 40%;
+  order: 3;
+  overflow: hidden;
+  text-align: right;
+}
+
+.balance-amount {
+  color: rgb(53, 56, 64);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.wallet-address {
+  margin-right: 8px;
+  font-size: 12px;
+  color: rgb(53, 56, 64);
+  float: right;
+  margin-top: 6px;
+}
+
+.card-body .dropzone#singleFileUpload {
+  border: 2px dashed #7468bd;
+}
+
+.card-body .dropzone {
+  margin: 10px 30px;
+  background: #f0f6ff;
+  transition: all .3s ease;
+}
+
+.card-body .dz-message {
+  background: #f0f6ff;
+  padding: 20px;
+  transition: all .3s ease;
+  border-radius: 5px;
+}
+
+.card-body .dz-message i.gradient-1, .card-body .dz-message i.gradient-2, .card-body .dz-message i.gradient-3 {
+  font-size: 70px;
+  display: block;
+  text-align: center;
+}
+
+.card-body .dz-message i.gradient-1:before {
+  background: #5c84e8;
+  background: linear-gradient( 135deg, #5c84e8 1%, #7468bd 65%);
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.profile-image {
+  border-radius: 50%;
+}
+
+.item-controller {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  height: 70px;
+  background-color: rgb(251, 253, 255);
+  border-bottom: 1px solid rgb(229, 232, 235);
+}
+
+.item-controller .row {
+  align-items: center;
+  height: 70px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.item-controller a {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.item-controller div button {
+  margin-right: 15px;
+  padding: 0px 40px;
+  font-size: 1em;
+  height: 44px;
+}
+
+.item-controller .img-thumb {
+  margin: 0px 5px;
+}
+
+.item-controller .item-name {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.list_summary ul {
+  padding-left: 0;
+  list-style-type: none;
+}
+
+.list_summary ul li {
+  display: flex;
+  list-style-type: none;
+  margin-bottom: 8px;
+}
+
+.list_summary ul li .separator {
+  -webkit-box-flex: 1;
+  flex-grow: 1;
+  height: 16px;
+  border-bottom: 1px dotted rgb(112, 122, 131);
+  margin: 0px 5px;
+}
+
+.list_summary .asset-sell-subheader {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+#WEB3_CONNECT_MODAL_ID div {
+  z-index: 3000;
+}
+
+.item-image-container {
+  display: flex;
+  max-height: 300px;
+  align-items: center;
+  overflow: hidden;
+  justify-content: center;
+}
+
+.card-img-top-container{
+  -webkit-box-align: center;
+  align-items: center;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  max-height: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.card-img-top-container .card-img-top{
+  object-fit: contain;
+    width: auto;
+    height: auto;
+    border-radius: 5px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.trading-type{
+  text-transform: capitalize;
+}
