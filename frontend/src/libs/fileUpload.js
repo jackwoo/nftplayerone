@@ -54,9 +54,9 @@ class FileUpload extends Component {
 
     displayImage(src){
         if(this.props.fileOnly){
-            return <img src={URL.createObjectURL(src)} onClick={(e) => this.handleClick(e)} />
+            return <img src={URL.createObjectURL(src)} onClick={(e) => this.handleClick(e)} alt="thumbnail"/>
         } else {
-            return <img src={API_HOST + src} onClick={(e) => this.handleClick(e)} />
+            return <img src={API_HOST + src} onClick={(e) => this.handleClick(e)} alt="thumbnail"/>
         }
     }
 

@@ -84,7 +84,7 @@ class List extends Component {
                                 <Link to={"/marketplace/" + this.state.item._id}>
                                     <i className="icon dripicons-chevron-left"></i>
                                 </Link>
-                                <img className="img-thumb" src={this.state.item.image_url} height="40" width="40" />
+                                <img className="img-thumb" src={this.state.item.image_url} height="40" width="40" alt="thumbnail" />
                                 <h5 className="item-name">{this.state.item.name}</h5>
                             </div>
                         </div>
@@ -102,7 +102,7 @@ class List extends Component {
                                                 <div class="input-group mb-2 mr-sm-2">
                                                     <div class="input-group-prepend">
                                                         <div class="input-group-text">
-                                                            <img className="img-thumb" src="/assets/img/bnb.png" height="20" width="20" />
+                                                            <img className="img-thumb" src="/assets/img/bnb.png" height="20" width="20" alt="thumbnail" />
                                                         </div>
                                                     </div>
                                                     <input type="text" class="form-control" placeholder="Price" onChange={(e) => this.priceHandler(e)} />

@@ -196,7 +196,7 @@ class Nav extends Component {
                             <a className="nav-link nav-pill user-avatar nav-image-rounded" href="/profile">
                                 <div className="rounded-image-container">
                                     {this.state.isWalletConnected ?
-                                        <img src={this.state.profile.image_url ? this.state.profile.image_url : "/assets/img/default.jpg"} className="w-35 rounded-circle" alt="profile image" />
+                                        <img src={this.state.profile.image_url ? this.state.profile.image_url : "/assets/img/default.jpg"} className="w-35 rounded-circle" alt="profile" />
                                         :
                                         <i className="la la-user"></i>
                                     }

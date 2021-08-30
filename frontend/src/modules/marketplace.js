@@ -4,7 +4,6 @@ import {
 	convertToETH,
 	getCurrentWallet
 } from "../libs/interact";
-const API_HOST = process.env.REACT_APP_API_URL;
 
 class Marketplace extends Component {
 	constructor(props) {

@@ -261,7 +261,7 @@ class Item extends Component {
                                     }}>
                                         <a href="#!">
                                             <div className="rounded-image-container">
-                                                <img alt="profile image" src={this.state.owner.image_url ? this.state.owner.image_url : "/assets/img/default.jpg"} />
+                                                <img alt="profile" src={this.state.owner.image_url ? this.state.owner.image_url : "/assets/img/default.jpg"}/>
                                             </div>
                                         </a>
                                         <p className="p-l-10 p-r-20">Owned by
@@ -361,13 +361,13 @@ class Item extends Component {
                                                                     <td>{t.price ? convertToETH(t.price) : ""}</td>
                                                                     <td>
                                                                         {from_img &&
-                                                                            <img className="m-r-10" alt="profile image" src={from_img} width="24px" style={{ "borderRadius": "50%" }} />
+                                                                            <img className="m-r-10" alt="profile" src={from_img} width="24px" style={{ "borderRadius": "50%" }} />
                                                                         }
                                                                         <span>{from_name}</span>
                                                                     </td>
                                                                     <td>
                                                                         {to_img &&
-                                                                            <img className="m-r-10" alt="profile image" src={to_img} width="24px" style={{ "borderRadius": "50%" }} />
+                                                                            <img className="m-r-10" alt="profile" src={to_img} width="24px" style={{ "borderRadius": "50%" }} />
                                                                         }
                                                                         <span>{to_name}</span>
                                                                     </td>
@@ -403,11 +403,11 @@ class Item extends Component {
                             <hr />
                             <div className="d-flex flex-row justify-content-between align-items-center">
                                 <div className="justify-content-start">
-                                    <img className="img-thumb" src={API_HOST + this.state.item.image_url} height="50px" width="50px" />
+                                    <img className="img-thumb" src={API_HOST + this.state.item.image_url} height="50px" width="50px" alt="thumbnail"/>
                                     <span className="p-l-10">{this.state.item.name}</span>
                                 </div>
                                 <div className="justify-content-end">
-                                    <img className="img-thumb" src="/assets/img/bnb.png" height="16" width="16" />
+                                    <img className="img-thumb" src="/assets/img/bnb.png" height="16" width="16" alt="thumbnail"/>
                                     <span className="text-muted p-l-5">{this.state.item.price}</span>
                                 </div>
                             </div>
@@ -417,7 +417,7 @@ class Item extends Component {
                                     <strong>Total</strong>
                                 </div>
                                 <div className="justify-content-end">
-                                    <img className="img-thumb" src="/assets/img/bnb.png" height="16" width="16" />
+                                    <img className="img-thumb" src="/assets/img/bnb.png" height="16" width="16" alt="thumbnail"/>
                                     <strong className="p-l-5">{convertToETH(this.state.item.price)}</strong>
                                 </div>
                             </div>
@@ -448,7 +448,7 @@ class Item extends Component {
                                 <div className="input-group mb-2 mr-sm-2">
                                     <div className="input-group-prepend">
                                         <div className="input-group-text">
-                                            <img className="img-thumb" src="/assets/img/bnb.png" height="20" width="20" />
+                                            <img className="img-thumb" src="/assets/img/bnb.png" height="20" width="20" alt="thumbnail"/>
                                         </div>
                                     </div>
                                     <input type="text" className="form-control" placeholder="Price" onChange={(e) => this.priceHandler(e)} />

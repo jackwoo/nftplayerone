@@ -49,13 +49,13 @@ class Home extends Component {
 												<div className="card-content">
 													<div className="item-image-container text-center">
 														<div className="item-image-inner-container">
-															<img className="card-img-top img-fluid" src={this.state.item.image_url} alt="Featured image" />
+															<img className="card-img-top img-fluid" src={this.state.item.image_url} alt="Featured" />
 														</div>
 													</div>
 													<div className="card-body">
 														<div className="media">
 															<img className="align-self-center mr-3 w-40 rounded-circle" 
-																src={this.state.item.onwer ? this.state.item.owner.image_url : "/assets/img/default.jpg"} alt="profile image" />
+																src={this.state.item.onwer ? this.state.item.owner.image_url : "/assets/img/default.jpg"} alt="profile" />
 															<div className="media-body">
 																<p className="mb-0">
 																	<strong className="">{this.state.item.name}</strong>

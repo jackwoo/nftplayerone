@@ -225,20 +225,20 @@ class Profile extends Component {
                                                                         <td className="trading-type">{t.event_type}</td>
                                                                         <td>{t.item_id &&
                                                                             <Link to={"/marketplace" + t.item_id._id}>
-                                                                                <img className="m-r-10" alt="profile image" src={t.item_id.image_url} width="24px" style={{ "borderRadius": "50%" }} />
+                                                                                <img className="m-r-10" alt="profile" src={t.item_id.image_url} width="24px" style={{ "borderRadius": "50%" }} />
                                                                                 <span>{t.item_id.name}</span>
                                                                             </Link>
                                                                         }</td>
                                                                         <td>{t.price ? convertToETH(t.price) : ""}</td>
                                                                         <td>
                                                                             {from_img &&
-                                                                                <img className="m-r-10" alt="profile image" src={from_img} width="24px" style={{ "borderRadius": "50%" }} />
+                                                                                <img className="m-r-10" alt="profile" src={from_img} width="24px" style={{ "borderRadius": "50%" }} />
                                                                             }
                                                                             <span>{from_name}</span>
                                                                         </td>
                                                                         <td>
                                                                             {to_img &&
-                                                                                <img className="m-r-10" alt="profile image" src={to_img} width="24px" style={{ "borderRadius": "50%" }} />
+                                                                                <img className="m-r-10" alt="profile" src={to_img} width="24px" style={{ "borderRadius": "50%" }} />
                                                                             }
                                                                             <span>{to_name}</span>
                                                                         </td>
