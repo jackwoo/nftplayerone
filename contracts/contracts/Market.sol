@@ -2,35 +2,32 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "./INFT.sol";
 
-contract Market is ERC721URIStorage {
+contract Market is ReentrancyGuard {
     using Address for address;
     using Counters for Counters.Counter;
 
     struct ListingInfo {
         uint256 price;
+        address owner;
         bool onList;
     }
 
-    address payable private _platform;
-
     address private _admin;
-
-    Counters.Counter private _tokenIds;
 
     mapping (uint256 => ListingInfo) private _listings;
 
-    mapping (address => bool) private _minted;
+    mapping (address => bool) private _nftContracts;
 
-    mapping (uint256 => bool) private _verified;
+    mapping (address => uint256) private _rewards;
 
-    mapping (uint256 => address) private _creators;
+    uint256 private _feeBalance;
 
-    constructor (address admin_, address payable platform_) ERC721("NFT", "NFT") {
+    constructor (address admin_, address nftAddr_) {
         _admin = admin_;
-        _platform = platform_;
+        _nftContracts[nftAddr_] = true;
     }
 
     modifier onlyAdmin {
@@ -43,7 +40,7 @@ contract Market is ERC721URIStorage {
 
     modifier onlyTokenOwner (uint256 tokenId) {
         require (
-            ownerOf(tokenId) == msg.sender, 
+            _listings[tokenId].owner == msg.sender, 
             "Only token owner can call this function"
         );
         _;
@@ -53,6 +50,14 @@ contract Market is ERC721URIStorage {
         require (
             !isListed(tokenId),
             "Operation cannot be done to listed token"
+        );
+        _;
+    }
+
+    modifier onlyRegisteredNFTContract (address addr) {
+        require (
+            _nftContracts[addr],
+            "NFT contract is not registered"
         );
         _;
     }
@@ -86,49 +91,23 @@ contract Market is ERC721URIStorage {
         uint256 timestamp
     );
 
-    event Mint (
-        uint256 tokenId,
+    event RewardWithdrawal (
         address indexed creator,
-        string tokenURI,
+        uint256 amount,
         uint256 timestamp
     );
 
-    function hasMinted(address addr) public view returns (bool) {
-        return _minted[addr];
-    }
+    event FeeWithdrawal (
+        address indexed admin,
+        uint256 amount,
+        uint256 timestamp
+    );
 
-    function hasVerified(uint256 tokenId) public view returns (bool) {
-        return _verified[tokenId];
-    }
-
-    function creatorOf(uint256 tokenId) public view returns (address) 
-    {
-        return _creators[tokenId];
-    }
-
-    function mintNFT(string memory tokenURI) public returns (uint256) {
-        // require(!_minted[msg.sender], "This address has already minted a token");
-        _tokenIds.increment();
-
-        uint256 newId = _tokenIds.current();
-        _safeMint(msg.sender, newId);
-        _setTokenURI(newId, tokenURI);
-        _creators[newId] = msg.sender;
-        _minted[msg.sender] = true;
-
-        emit Mint(
-            newId,
-            msg.sender,
-            tokenURI,
-            block.timestamp
-        );
-
-        return newId;
-    }
-
-    function verify(uint256 tokenId) public onlyAdmin {
-        _verified[tokenId] = true;
-    }
+    event NFTContractRegistration (
+        address indexed contractAddr,
+        address indexed admin,
+        uint256 timestamp
+    );
 
     function isListed(uint256 tokenId) public view returns (bool) {
         return _listings[tokenId].onList;
@@ -139,23 +118,30 @@ contract Market is ERC721URIStorage {
         return _listings[tokenId].price;
     }
 
-    function approve(address to, uint256 tokenId) public onlyUnlistedToken(tokenId) override {
-        super.approve(to, tokenId);
+    function rewardOf(address creator) public view returns (uint256) {
+        return _rewards[creator];
     }
 
-    function transferFrom(address from, address to, uint256 tokenId) public onlyUnlistedToken(tokenId) override {
-        super.transferFrom(from, to, tokenId);
+    function feeBalance() public view returns (uint256) {
+        return _feeBalance;
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) public onlyUnlistedToken(tokenId) override {
-        super.safeTransferFrom(from, to, tokenId, _data);
-    }
-
-    function listToken(uint256 tokenId, uint256 price) public onlyTokenOwner(tokenId) {
+    function listToken(address nftAddr, uint256 tokenId, uint256 price) 
+        public 
+        onlyRegisteredNFTContract(nftAddr) 
+    {
         require (price > 0, "Invalid price");
         require (!isListed(tokenId), "Token already listed");
 
-        _listings[tokenId] = ListingInfo(price, true);
+        INFT nft = INFT(nftAddr);
+        require (nft.ownerOf(tokenId) == msg.sender, 
+                "Caller is not owner");
+        require (nft.getApproved(tokenId) == address(this) ||
+                 nft.isApprovedForAll(msg.sender, address(this)), 
+                "Token not approved to market");
+
+        nft.transferFrom(msg.sender, address(this), tokenId);
+        _listings[tokenId] = ListingInfo(price, msg.sender, true);
 
         emit Listing(
             tokenId,
@@ -165,9 +151,14 @@ contract Market is ERC721URIStorage {
         );
     }
 
-    function cancelListing(uint256 tokenId) public onlyTokenOwner(tokenId) {
+    function cancelListing(address nftAddr, uint256 tokenId) 
+        public 
+        onlyRegisteredNFTContract(nftAddr) 
+        onlyTokenOwner(tokenId) 
+    {
         require (isListed(tokenId), "Invalid token");
 
+        INFT(nftAddr).safeTransferFrom(address(this), msg.sender, tokenId);
         _listings[tokenId].onList = false;
 
         emit Cancellation(
@@ -177,10 +168,14 @@ contract Market is ERC721URIStorage {
         );
     }
 
-    function setPrice(uint256 tokenId, uint256 price) public onlyTokenOwner(tokenId) {
+    function setPrice(address nftAddr, uint256 tokenId, uint256 price) 
+        public 
+        onlyRegisteredNFTContract(nftAddr) 
+        onlyTokenOwner(tokenId) 
+    {
         require (price > 0, "Invalid price");
         require (isListed(tokenId), "Invalid token");
-    
+
         uint256 oldPrice = _listings[tokenId].price;
         _listings[tokenId].price = price;
 
@@ -193,22 +188,29 @@ contract Market is ERC721URIStorage {
         );
     }
 
-    function buyToken(uint256 tokenId) public payable {
+    function buyToken(address nftAddr, uint256 tokenId) 
+        public 
+        payable 
+        nonReentrant 
+        onlyRegisteredNFTContract(nftAddr) 
+    {
         require (isListed(tokenId), "Invalid token");
-        require (ownerOf(tokenId) != msg.sender, "Attempt to buy owned token");
+
+        INFT nft = INFT(nftAddr);
+        require (nft.ownerOf(tokenId) != msg.sender, 
+                "Attempt to buy owned token");
 
         uint256 price = priceOf(tokenId);
         require (msg.value == price, "Price not match");
 
         uint256 payment = price * 19 / 20;
-        uint256 bonus = (price - payment) / 2;
-        uint256 fee = price - payment - bonus;
-        address owner = ownerOf(tokenId);
+        uint256 reward = price * 3 / 100;
+        address owner = nft.ownerOf(tokenId);
         Address.sendValue(payable(owner), payment);
-        Address.sendValue(payable(creatorOf(tokenId)), bonus);
-        Address.sendValue(_platform, fee);
+        _rewards[nft.creatorOf(tokenId)] += reward;
+        _feeBalance += price - payment - reward;
 
-        _safeTransfer(ownerOf(tokenId), msg.sender, tokenId, '');
+        nft.safeTransferFrom(address(this), msg.sender, tokenId);
         _listings[tokenId].onList = false;
 
         emit Purchase(
@@ -216,6 +218,54 @@ contract Market is ERC721URIStorage {
             msg.sender,
             owner,
             price,
+            block.timestamp
+        );
+    }
+
+    function withdrawReward(uint256 amount) 
+        public 
+        nonReentrant 
+    {
+        require (amount <= _rewards[msg.sender], 
+                "Withdrawal exceeds reward balance");
+
+        Address.sendValue(payable(msg.sender), amount);
+        _rewards[msg.sender] -= amount;
+
+        emit RewardWithdrawal(
+            msg.sender,
+            amount,
+            block.timestamp
+        );
+    }
+
+    function withdrawFee(uint256 amount) 
+        public 
+        nonReentrant 
+        onlyAdmin 
+    {
+        require (amount <= _feeBalance, 
+                "Withdrawal exceeds fee balance");
+
+        Address.sendValue(payable(msg.sender), amount);
+        _feeBalance -= amount;
+
+        emit FeeWithdrawal(
+            msg.sender,
+            amount,
+            block.timestamp
+        );
+    }
+
+    function registerNFTContract(address nftAddr) 
+        public 
+        onlyAdmin 
+    {
+        _nftContracts[nftAddr] = true;
+
+        emit NFTContractRegistration(
+            nftAddr,
+            msg.sender,
             block.timestamp
         );
     }
