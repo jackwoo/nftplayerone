@@ -124,7 +124,7 @@
  - `function priceOf(uint256 tokenId) public view returns (uint256)`: 返回`tokenId`的价格。
  - `function rewardOf(address creator) public view returns (uint256)`: 返回`creator`在合同中未取出的奖励余额。
  - `function feeBalance() public view returns (uint256)`: 返回平台在合同中未取出的手续费余额。
- - `function listToken(address nftAddr, uint256 tokenId, uint256 price) public onlyRegisteredNFTContract(nftAddr)`: 将`nftAddr`中的`tokenId`放到市场上售卖，价格为`price`，`price`不为零。caller必须为`tokenId`的owner，市场合同必须已具有授权。listing期间`tokenId`会转手给市场合同，合同内会存储原owner信息，此期间无法通过其他方式再转手该token。生成一个Listing event。
+ - `function listToken(address nftAddr, uint256 tokenId, uint256 price) public onlyRegisteredNFTContract(nftAddr)`: 将`nftAddr`中的`tokenId`放到市场上售卖，价格为`price`，`price`不为零。caller必须为`tokenId`的owner，市场合同必须已具有授权。listing期间`tokenId`会转手给市场合同，合同内会存储原owner信息，此期间无法通过其他方式再转手该token。生成一个Listing event。
  - `function cancelListing(address nftAddr, uint256 tokenId) public onlyRegisteredNFTContract(nftAddr) onlyTokenOwner(tokenId)`: 取消nftAddr中`tokenId`的listing。tokenId必须已经listed。生成一个Cancellation event。
  - `function setPrice(address nftAddr, uint256 tokenId, uint256 price) public onlyRegisteredNFTContract(nftAddr) onlyTokenOwner(tokenId)`: 将nftAddr中`tokenId`的价格修改为price。`tokenId`必须已经listed。生成一个Edit event。
  - `function buyToken(address nftAddr, uint256 tokenId) public payable nonReentrant onlyRegisteredNFTContrac (nftAddr)`: 购买`nftAddr`中的`tokenId`。装账金额必须等同售卖价格。caller不可以为`tokenId`的owner。抽取3%的金额作为reward存给对应的creator，2%作为平台手续费，这些金额都将存在合同里，可以随时取出。生成一个Purchase event。
