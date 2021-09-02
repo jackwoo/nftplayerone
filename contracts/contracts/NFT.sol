@@ -29,7 +29,7 @@ contract NFT is ERC721URIStorage, ReentrancyGuard {
     }
 
     event Mint (
-        uint256 tokenId,
+        uint256 indexed tokenId,
         address indexed creator,
         string tokenURI,
         uint256 timestamp

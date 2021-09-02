@@ -60,12 +60,12 @@
  - `function tokenURI(uint256 tokenId) public view returns (string memory)`: 返回存放`tokenId`的metadata的uri。
  - `function getApproved(uint256 tokenId) public view returns (address)`: 返回`tokenId`授权的地址。
  - `function isApprovedForAll(address owner, address operator) public view returns (bool)`: 返回`operator`是否具有`owner`的完全授权。
- - `function approve(address to, uint256 tokenId) public`: caller必须为tokenId的拥有者，或具有该拥有者的完全授权。将tokenId授权给地址to，to将可以转交tokenId的拥有权。单个token最多只能同时授权给一个地址，再次授权会覆盖掉之前的地址。生成一个Approval event。
- - `function setApprovalForAll(address operator, bool approved) public`: 设定operator是否具有caller的完全授权。若approved设定为true，operator可以转交caller所有token的拥有权。每个地址可以拥有不止一个具有完全授权的operator地址。生成一个ApprovalForAll event。
- - `function mintNFT(string memory tokenURI) public nonReentrant returns (uint256)`: 创建一个token，metadata将存放于tokenURI。token的拥有者和创作者为caller。返回tokenId。生成一个Mint event。
- - `function transferFrom(address from, address to, uint256 tokenId) public`: from必须为tokenId的拥有者，caller必须为拥有者或具有授权。将tokenId转手给to。生成一个Transfer event。
- - `function safeTransferFrom(address from, address to, uint256 tokenId) public`: 同transferFrom，但会检查to是否为ERC721Receiver。
- - `function verify(address creator) public onlyAdmin;`: 认证creator。生成一个Verification event。
+ - `function approve(address to, uint256 tokenId) public`: caller必须为`tokenId`的拥有者，或具有该拥有者的完全授权。将`tokenId`授权给地址`to`，`to`将有权转手`tokenId`。单个token最多只能同时授权给一个地址，再次授权会覆盖掉之前的地址。生成一个Approval event。
+ - `function setApprovalForAll(address operator, bool approved) public`: 设定`operator`是否具有caller的完全授权。若`approved`设定为true，`operator`将有权转手caller所有的token。每个地址可以拥有不止一个具有完全授权的`operator`地址。生成一个ApprovalForAll event。
+ - `function mintNFT(string memory tokenURI) public nonReentrant returns (uint256)`: 创建一个token，metadata将存放于`tokenURI`。token的拥有者和创作者为caller。返回`tokenId`。生成一个Mint event。
+ - `function transferFrom(address from, address to, uint256 tokenId) public`: `from`必须为`tokenId`的拥有者，caller必须为拥有者或具有授权。将`tokenId`转手给`to`。生成一个Transfer event。
+ - `function safeTransferFrom(address from, address to, uint256 tokenId) public`: 同`transferFrom`，但会检查`to`是否为`ERC721Receiver`。
+ - `function verify(address creator) public onlyAdmin;`: 认证`creator`。生成一个Verification event。
 
  ## market.sol
  - 用户流程：通过listToken把nft放到市场上售卖，可以修改价格或取消listing。通过buyToken购买nft。通过withdrawReward取出目前存储的creator reward。
@@ -120,14 +120,14 @@
     );
 
  ### Functions
- - `function isListed(uint256 tokenId) public view returns (bool)`: 返回tokenId是否listed。
- - `function priceOf(uint256 tokenId) public view returns (uint256)`: 返回tokenId的价格。
- - `function rewardOf(address creator) public view returns (uint256)`: 返回creator在合同中未取出的奖励余额。
+ - `function isListed(uint256 tokenId) public view returns (bool)`: 返回`tokenId`是否listed。
+ - `function priceOf(uint256 tokenId) public view returns (uint256)`: 返回`tokenId`的价格。
+ - `function rewardOf(address creator) public view returns (uint256)`: 返回`creator`在合同中未取出的奖励余额。
  - `function feeBalance() public view returns (uint256)`: 返回平台在合同中未取出的手续费余额。
- - `function listToken(address nftAddr, uint256 tokenId, uint256 price) public onlyRegisteredNFTContract(nftAddr)`: 将nftAddr中的tokenId放到市场上售卖，价格为price，price不为零。caller必须为tokenId的owner，市场合同必须已具有授权。list期间tokenId会转手给市场合同，合同内会存储原owner信息，此期间无法通过其他方式再转手该token。生成一个Listing event。
- - `function cancelListing(address nftAddr, uint256 tokenId) public onlyRegisteredNFTContract(nftAddr) onlyTokenOwner(tokenId)`: 取消nftAddr中tokenId的listing。tokenId必须已经listed。生成一个Cancellation event。
- - `function setPrice(address nftAddr, uint256 tokenId, uint256 price) public onlyRegisteredNFTContract(nftAddr) onlyTokenOwner(tokenId)`: 将nftAddr中tokenId的价格修改为price。tokenId必须已经listed。生成一个Edit event。
- - `function buyToken(address nftAddr, uint256 tokenId) public payable nonReentrant onlyRegisteredNFTContrac (nftAddr)`: 购买nftAddr中的tokenId。装账金额必须等同售卖价格。caller不可以为tokenId的owner。抽取3%的金额作为reward存给对应的creator，2%作为平台手续费，这些金额都将存在合同里，可以随时取出。生成一个Purchase event。
- - `function withdrawReward(uint256 amount) public nonReentrant`: 取出caller存于合同中的reward，金额为amount。amount必须不超过存额。生成一个RewardWithdrawal event。
- - `function withdrawFee(uint256 amount) public nonReentrant onlyAdmin`: 取出存于合同中的平台手续费，金额为amount。amount必须不超过存额。生成一个FeeWithdrawal event。
- - `function registerNFTContract(address nftAddr) public onlyAdmin`: 将nftAddr注册到市场合同中作为可用的nft合同。生成一个Registration event。
+ - `function listToken(address nftAddr, uint256 tokenId, uint256 price) public onlyRegisteredNFTContract(nftAddr)`: 将`nftAddr`中的`tokenId`放到市场上售卖，价格为`price`，`price`不为零。caller必须为`tokenId`的owner，市场合同必须已具有授权。listing期间`tokenId`会转手给市场合同，合同内会存储原owner信息，此期间无法通过其他方式再转手该token。生成一个Listing event。
+ - `function cancelListing(address nftAddr, uint256 tokenId) public onlyRegisteredNFTContract(nftAddr) onlyTokenOwner(tokenId)`: 取消nftAddr中`tokenId`的listing。tokenId必须已经listed。生成一个Cancellation event。
+ - `function setPrice(address nftAddr, uint256 tokenId, uint256 price) public onlyRegisteredNFTContract(nftAddr) onlyTokenOwner(tokenId)`: 将nftAddr中`tokenId`的价格修改为price。`tokenId`必须已经listed。生成一个Edit event。
+ - `function buyToken(address nftAddr, uint256 tokenId) public payable nonReentrant onlyRegisteredNFTContrac (nftAddr)`: 购买`nftAddr`中的`tokenId`。装账金额必须等同售卖价格。caller不可以为`tokenId`的owner。抽取3%的金额作为reward存给对应的creator，2%作为平台手续费，这些金额都将存在合同里，可以随时取出。生成一个Purchase event。
+ - `function withdrawReward(uint256 amount) public nonReentrant`: 取出caller存于合同中的reward，金额为`amount`。`amount`必须不超过余额。生成一个RewardWithdrawal event。
+ - `function withdrawFee(uint256 amount) public nonReentrant onlyAdmin`: 取出存于合同中的平台手续费，金额为`amount`。`amount`必须不超过余额。生成一个FeeWithdrawal event。
+ - `function registerNFTContract(address nftAddr) public onlyAdmin`: 将`nftAddr`注册到市场合同中作为可用的nft合同。生成一个Registration event。

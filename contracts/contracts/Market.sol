@@ -46,14 +46,6 @@ contract Market is ReentrancyGuard {
         _;
     }
 
-    modifier onlyUnlistedToken (uint256 tokenId) {
-        require (
-            !isListed(tokenId),
-            "Operation cannot be done to listed token"
-        );
-        _;
-    }
-
     modifier onlyRegisteredNFTContract (address addr) {
         require (
             _nftContracts[addr],
@@ -196,16 +188,17 @@ contract Market is ReentrancyGuard {
     {
         require (isListed(tokenId), "Invalid token");
 
-        INFT nft = INFT(nftAddr);
-        require (nft.ownerOf(tokenId) != msg.sender, 
+
+        address owner = _listings[tokenId].owner;
+        require (owner != msg.sender, 
                 "Attempt to buy owned token");
 
         uint256 price = priceOf(tokenId);
         require (msg.value == price, "Price not match");
 
+        INFT nft = INFT(nftAddr);
         uint256 payment = price * 19 / 20;
         uint256 reward = price * 3 / 100;
-        address owner = nft.ownerOf(tokenId);
         Address.sendValue(payable(owner), payment);
         _rewards[nft.creatorOf(tokenId)] += reward;
         _feeBalance += price - payment - reward;
@@ -226,6 +219,7 @@ contract Market is ReentrancyGuard {
         public 
         nonReentrant 
     {
+        require (_rewards[msg.sender] > 0, "Current reward is zero");
         require (amount <= _rewards[msg.sender], 
                 "Withdrawal exceeds reward balance");
 
