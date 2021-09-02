@@ -12,6 +12,17 @@ import {
 import { Modal } from 'react-bootstrap';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import moment from 'moment';
+import ReactTooltip from 'react-tooltip';
+import {
+    FacebookIcon,
+    TwitterIcon,
+    TelegramIcon,
+    WhatsappIcon,
+    FacebookShareButton,
+    TelegramShareButton,
+    WhatsappShareButton,
+    TwitterShareButton
+} from "react-share";
 
 const API_HOST = process.env.REACT_APP_API_URL;
 
@@ -196,6 +207,69 @@ class Item extends Component {
         })
     }
 
+    renderHistory() {
+        return this.state.item.trading_history?.map((t, i) => {
+            let from_name = "";
+            let from_img = false;
+            if (t.from_account != null) {
+                from_name = t.from_account.address ? String(t.from_account.address).substring(0, 6).toUpperCase() : "";
+                from_img = t.from_account.image_url ? t.from_account.image_url : "/assets/img/default.jpg";
+            }
+
+            let to_name = "";
+            let to_img = false;
+            if (t.to_account != null) {
+                to_name = t.to_account.address ? String(t.to_account.address).substring(0, 6).toUpperCase() : "";
+                to_img = t.to_account.image_url ? t.to_account.image_url : "/assets/img/default.jpg";
+            }
+
+            let current = moment();
+            let happened = moment(t.updated_at);
+            let time_dif = moment.duration(current.diff(happened));
+            let time_pasted = time_dif.asSeconds();
+            let time_unit = "second";
+            if (time_pasted > 60) {
+                time_pasted = time_dif.asMinutes();
+                time_unit = "mins";
+                if (time_pasted > 60) {
+                    time_pasted = time_dif.asHours();
+                    time_unit = "hours";
+                    if (time_pasted > 24) {
+                        time_pasted = time_dif.asDays();
+                        time_unit = "days";
+                        if (time_pasted > 30) {
+                            time_pasted = time_dif.asMonths();
+                            time_unit = "months";
+                            if (time_pasted > 12) {
+                                time_pasted = time_dif.asYears();
+                                time_unit = "years";
+                            }
+                        }
+                    }
+                }
+            }
+            return (
+                <tr key={i}>
+                    <td className="trading-type">{t.event_type}</td>
+                    <td>{t.price ? convertToETH(t.price) : ""}</td>
+                    <td>
+                        {from_img &&
+                            <img className="m-r-10" alt="profile" src={from_img} width="24px" style={{ "borderRadius": "50%" }} />
+                        }
+                        <span>{from_name}</span>
+                    </td>
+                    <td>
+                        {to_img &&
+                            <img className="m-r-10" alt="profile" src={to_img} width="24px" style={{ "borderRadius": "50%" }} />
+                        }
+                        <span>{to_name}</span>
+                    </td>
+                    <td>{Math.floor(time_pasted) + " " + time_unit + " ago"}</td>
+                </tr>
+            )
+        })
+    }
+
     render() {
         if (this.state.loading) {
             return (
@@ -247,12 +321,45 @@ class Item extends Component {
                                             <div className="col-6">
                                                 <h1>{this.state.item.name}</h1>
                                             </div>
-                                            <div className="col-6">
-                                                <button type="button" className="btn btn-secondary" style={{ "float": "right" }} onClick={() => this.retrieveData()}>
+                                            <div className="col-6 text-right">
+                                                <button type="button" className="btn btn-secondary item-function-btn" data-tip="Refesh Metadata" onClick={() => this.retrieveData()}>
                                                     <i className="icon dripicons-clockwise"></i>
                                                 </button>
+                                                <button type="button" 
+                                                    class="btn btn-secondary dropdown item-function-btn" 
+                                                    data-toggle="dropdown" aria-expanded="false" data-tip="Share"
+                                                    style={{"borderTopLeftRadius" : "0px", "borderBottomLeftRadius" : "0px"}}>
+                                                    <i class="zmdi zmdi-share zmdi-hc-fw"></i>
+                                                </button>
+                                                <div class="dropdown-menu menu-icons dropdown-menu-right share-dropdown" x-placement="bottom-start">
+                                                    <li>
+                                                        <FacebookShareButton url={window.location.href} className="share-btn">
+                                                            <FacebookIcon size={24} round={true} />
+                                                            <span>Share on Facebook</span>
+                                                        </FacebookShareButton>
+                                                    </li>
+                                                    <li>
+                                                        <TwitterShareButton url={window.location.href} className="share-btn">
+                                                            <TwitterIcon size={24} round={true} />
+                                                            <span>Share in Twitter</span>
+                                                        </TwitterShareButton>
+                                                    </li>
+                                                    <li>
+                                                        <TelegramShareButton url={window.location.href} className="share-btn">
+                                                            <TelegramIcon size={24} round={true} />
+                                                            <span>Share in Telegram</span>
+                                                        </TelegramShareButton>
+                                                    </li>
+                                                    <li>
+                                                        <WhatsappShareButton url={window.location.href} className="share-btn">
+                                                            <WhatsappIcon size={24} round={true} />
+                                                            <span>Share in Whatsapp</span>
+                                                        </WhatsappShareButton>
+                                                    </li>
+                                                </div>
                                             </div>
                                         </div>
+                                        <ReactTooltip />
                                     </section>
 
                                     <section className="m-b-10" style={{
@@ -261,7 +368,7 @@ class Item extends Component {
                                     }}>
                                         <a href="#!">
                                             <div className="rounded-image-container">
-                                                <img alt="profile" src={this.state.owner.image_url ? this.state.owner.image_url : "/assets/img/default.jpg"}/>
+                                                <img alt="profile" src={this.state.owner.image_url ? this.state.owner.image_url : "/assets/img/default.jpg"} />
                                             </div>
                                         </a>
                                         <p className="p-l-10 p-r-20">Owned by
@@ -281,13 +388,13 @@ class Item extends Component {
                                         </div>
                                     }
                                     <div className="card">
-                                        <div className="card-header">
+                                        <div className="card-header" data-q-action="card-collapsed">
                                             <strong>Price History</strong>
-                                            <ul className="actions top-right">
-                                                <li><a href="#!" data-q-action="card-collapsed"><i className="icon dripicons-chevron-down"></i></a></li>
-                                            </ul>
+                                            <div className="actions top-right">
+                                                <i className="icon dripicons-chevron-down"></i>
+                                            </div>
                                         </div>
-                                        <div className="card-body block-el" style={{}}>
+                                        <div className="card-body block-el">
                                             No Trading Data Yet
                                         </div>
                                     </div>
@@ -296,11 +403,11 @@ class Item extends Component {
                             <div className="row">
                                 <div className="col-12">
                                     <div className="card">
-                                        <div className="card-header">
+                                        <div className="card-header" data-q-action="card-collapsed">
                                             <strong>Trading History</strong>
-                                            <ul className="actions top-right">
-                                                <li><a href="#!" data-q-action="card-collapsed"><i className="icon dripicons-chevron-down"></i></a></li>
-                                            </ul>
+                                            <div className="actions top-right">
+                                                <i className="icon dripicons-chevron-down"></i>
+                                            </div>
                                         </div>
                                         <div className="card-body block-el">
                                             <div className="table-responsive">
@@ -315,66 +422,7 @@ class Item extends Component {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {this.state.item.trading_history?.map((t, i) => {
-                                                            let from_name = "";
-                                                            let from_img = false;
-                                                            if (t.from_account != null) {
-                                                                from_name = t.from_account.address ? String(t.from_account.address).substring(0, 6).toUpperCase() : "";
-                                                                from_img = t.from_account.image_url ? t.from_account.image_url : "/assets/img/default.jpg";
-                                                            }
-
-                                                            let to_name = "";
-                                                            let to_img = false;
-                                                            if (t.to_account != null) {
-                                                                to_name = t.to_account.address ? String(t.to_account.address).substring(0, 6).toUpperCase() : "";
-                                                                to_img = t.to_account.image_url ? t.to_account.image_url : "/assets/img/default.jpg";
-                                                            }
-
-                                                            let current = moment();
-                                                            let happened = moment(t.updated_at);
-                                                            let time_dif = moment.duration(current.diff(happened));
-                                                            let time_pasted = time_dif.asSeconds();
-                                                            let time_unit = "second";
-                                                            if (time_pasted > 60) {
-                                                                time_pasted = time_dif.asMinutes();
-                                                                time_unit = "mins";
-                                                                if (time_pasted > 60) {
-                                                                    time_pasted = time_dif.asHours();
-                                                                    time_unit = "hours";
-                                                                    if (time_pasted > 24) {
-                                                                        time_pasted = time_dif.asDays();
-                                                                        time_unit = "days";
-                                                                        if (time_pasted > 30) {
-                                                                            time_pasted = time_dif.asMonths();
-                                                                            time_unit = "months";
-                                                                            if (time_pasted > 12) {
-                                                                                time_pasted = time_dif.asYears();
-                                                                                time_unit = "years";
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                            return (
-                                                                <tr key={i}>
-                                                                    <td className="trading-type">{t.event_type}</td>
-                                                                    <td>{t.price ? convertToETH(t.price) : ""}</td>
-                                                                    <td>
-                                                                        {from_img &&
-                                                                            <img className="m-r-10" alt="profile" src={from_img} width="24px" style={{ "borderRadius": "50%" }} />
-                                                                        }
-                                                                        <span>{from_name}</span>
-                                                                    </td>
-                                                                    <td>
-                                                                        {to_img &&
-                                                                            <img className="m-r-10" alt="profile" src={to_img} width="24px" style={{ "borderRadius": "50%" }} />
-                                                                        }
-                                                                        <span>{to_name}</span>
-                                                                    </td>
-                                                                    <td>{Math.floor(time_pasted) + " " + time_unit + " ago"}</td>
-                                                                </tr>
-                                                            )
-                                                        })}
+                                                        {this.renderHistory()}
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -403,11 +451,11 @@ class Item extends Component {
                             <hr />
                             <div className="d-flex flex-row justify-content-between align-items-center">
                                 <div className="justify-content-start">
-                                    <img className="img-thumb" src={API_HOST + this.state.item.image_url} height="50px" width="50px" alt="thumbnail"/>
+                                    <img className="img-thumb" src={API_HOST + this.state.item.image_url} height="50px" width="50px" alt="thumbnail" />
                                     <span className="p-l-10">{this.state.item.name}</span>
                                 </div>
                                 <div className="justify-content-end">
-                                    <img className="img-thumb" src="/assets/img/bnb.png" height="16" width="16" alt="thumbnail"/>
+                                    <img className="img-thumb" src="/assets/img/bnb.png" height="16" width="16" alt="thumbnail" />
                                     <span className="text-muted p-l-5">{this.state.item.price}</span>
                                 </div>
                             </div>
@@ -417,7 +465,7 @@ class Item extends Component {
                                     <strong>Total</strong>
                                 </div>
                                 <div className="justify-content-end">
-                                    <img className="img-thumb" src="/assets/img/bnb.png" height="16" width="16" alt="thumbnail"/>
+                                    <img className="img-thumb" src="/assets/img/bnb.png" height="16" width="16" alt="thumbnail" />
                                     <strong className="p-l-5">{convertToETH(this.state.item.price)}</strong>
                                 </div>
                             </div>
@@ -448,7 +496,7 @@ class Item extends Component {
                                 <div className="input-group mb-2 mr-sm-2">
                                     <div className="input-group-prepend">
                                         <div className="input-group-text">
-                                            <img className="img-thumb" src="/assets/img/bnb.png" height="20" width="20" alt="thumbnail"/>
+                                            <img className="img-thumb" src="/assets/img/bnb.png" height="20" width="20" alt="thumbnail" />
                                         </div>
                                     </div>
                                     <input type="text" className="form-control" placeholder="Price" onChange={(e) => this.priceHandler(e)} />
@@ -497,7 +545,7 @@ class Item extends Component {
                 >
                     Are you sure you want to cancel the listing?
                 </SweetAlert>
-            </Fragment>
+            </Fragment >
         );
     }
 }

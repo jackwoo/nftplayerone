@@ -109,9 +109,7 @@ class Nav extends Component {
                                 </div>
                             </a>
                         </li>
-                    </ul>
-                    <ul className="navbar-nav nav-center site-logo">
-                        <li>
+                        <li className="nav-item">
                             <div className="nav-search-bar-container">
                                 <i className="icon dripicons-search"></i>
                                 <input type="text" className="nav-search-bar-input" placeholder="Search..." />
@@ -145,9 +143,7 @@ class Nav extends Component {
                                 </div>
                             </a>
                         </li>
-                    </ul>
-                    <ul className="navbar-nav nav-center site-logo">
-                        <li>
+                        <li className="nav-item">
                             <div className="nav-search-bar-container">
                                 <i className="icon dripicons-search"></i>
                                 <input type="text" className="nav-search-bar-input" placeholder="Search..." />
@@ -188,7 +184,7 @@ class Nav extends Component {
                                 <ul className="list-reset filter-list">
                                     <li><a className="dropdown-item" href="#!">Help Center</a></li>
                                     <div className="dropdown-divider"></div>
-                                    <li><a className="dropdown-item" href="#!">Blog</a></li>
+                                    <li><a className="dropdown-item" target="_blank" href="https://medium.com/@nftplayerone">Blog</a></li>
                                 </ul>
                             </div>
                         </li>
