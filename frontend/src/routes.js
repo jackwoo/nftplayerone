@@ -3,10 +3,10 @@ import { Route, Switch } from 'react-router';
 
 import Nav from './modules/nav/nav'
 import Home from './modules/home';
-import Marketplace from './modules/marketplace';
+import Marketplace from './modules/marketplace/marketplace';
 import Item from './modules/item';
 import Create from './modules/create';
-import Profile from './modules/profile';
+import Profile from './modules/profile/profile';
 import Wallet from './modules/wallet';
 import List from './modules/list';
 

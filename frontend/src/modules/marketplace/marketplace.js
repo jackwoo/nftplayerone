@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from 'react';
-import ItemModel from "../libs/ItemModel";
+import ItemModel from "../../libs/ItemModel";
 import {
 	convertToETH,
 	getCurrentWallet
-} from "../libs/interact";
+} from "../../libs/interact";
 
 class Marketplace extends Component {
 	constructor(props) {

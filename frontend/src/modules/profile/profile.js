@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import {
     getCurrentWallet,
     convertToETH
-} from "../libs/interact";
-import ItemModel from "../libs/ItemModel";
-import UserModel from '../libs/UserModel';
+} from "../../libs/interact";
+import ItemModel from "../../libs/ItemModel";
+import UserModel from '../../libs/UserModel';
 import moment from 'moment';
 const API_HOST = process.env.REACT_APP_API_URL;
 
@@ -106,7 +106,9 @@ class Profile extends Component {
                                                     "..." +
                                                     String(this.state.walletAddress).substring(38)
                                                 }</div>
+                                                <button className="btn btn-primary">Verfiy Me</button>
                                             </div>
+                                            
                                         </div>
 
                                         <ul className="nav nav-pills nav-pills-primary" id="pills-demo-4" role="tablist">
@@ -156,7 +158,6 @@ class Profile extends Component {
                                                             <button className="btn btn-primary m-t-20">Create NFT</button>
                                                         </Link>
                                                     </div>
-
                                                 }
 
                                             </div>
