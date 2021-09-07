@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import { mintNFT } from '../libs/interact';
-import ItemModel from '../libs/ItemModel';
-import { getCurrentWallet } from "../libs/interact";
-import FileUpload from "../libs/fileUpload";
+import { mintNFT } from '../../libs/interact';
+import ItemModel from '../../libs/ItemModel';
+import { getCurrentWallet } from "../../libs/interact";
+import FileUpload from "../../libs/fileUpload";
 
 class Create extends Component {
 

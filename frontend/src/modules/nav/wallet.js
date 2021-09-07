@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     getCurrentWallet,
     connectWallet
-} from "../libs/interact";
+} from "../../libs/interact";
 
 class Wallet extends Component {
     constructor(props) {

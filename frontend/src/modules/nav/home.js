@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from "react-router-dom"
-import ItemModel from "../libs/ItemModel";
+import ItemModel from "../../libs/ItemModel";
 
 class Home extends Component {
 

@@ -31,7 +31,7 @@ class Marketplace extends Component {
 					<div className="content container">
 						<section className="page-content">
 							<div className="row">
-								<div className="col-sm-12 col-md-12 col-lg-3 col-xl-3 col-xxl-2">
+								{/* <div className="col-sm-12 col-md-12 col-lg-3 col-xl-3 col-xxl-2">
 									<div className="card card-menu">
 										<div className="card-header">Category</div>
 										<div className="card-body p-10">
@@ -46,7 +46,7 @@ class Marketplace extends Component {
 											</ul>
 										</div>
 									</div>
-								</div>
+								</div> */}
 								<div className="col-sm-12 col-md-12 col-lg-9 col-xl-9 col-xxl-10">
 									<div className="row">
 										{this.state.collections.map((c, i) => {

@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import ItemModel from '../libs/ItemModel';
+import ItemModel from '../../libs/ItemModel';
 import {
     getCurrentWallet,
     purchaseItem,
@@ -8,7 +8,7 @@ import {
     cancelListing,
     convertToETH,
     PriceBTOW
-} from "../libs/interact";
+} from "../../libs/interact";
 import { Modal } from 'react-bootstrap';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import moment from 'moment';

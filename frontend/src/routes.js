@@ -2,13 +2,13 @@ import React, { Component, Fragment } from 'react';
 import { Route, Switch } from 'react-router';
 
 import Nav from './modules/nav/nav'
-import Home from './modules/home';
+import Home from './modules/nav/home';
 import Marketplace from './modules/marketplace/marketplace';
-import Item from './modules/item';
-import Create from './modules/create';
+import Item from './modules/marketplace/item';
+import Create from './modules/marketplace/create';
 import Profile from './modules/profile/profile';
-import Wallet from './modules/wallet';
-import List from './modules/list';
+import Wallet from './modules/nav/wallet';
+import List from './modules/marketplace/list';
 
 class AllRoutes extends Component {
   render() {

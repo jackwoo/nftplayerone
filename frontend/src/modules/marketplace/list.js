@@ -1,11 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import ItemModel from '../libs/ItemModel';
+import ItemModel from '../../libs/ItemModel';
 import {
     getCurrentWallet,
     listItem,
     PriceBTOW,
-} from "../libs/interact";
+} from "../../libs/interact";
 import { Modal } from 'react-bootstrap';
 
 class List extends Component {

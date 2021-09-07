@@ -106,7 +106,7 @@ class Profile extends Component {
                                                     "..." +
                                                     String(this.state.walletAddress).substring(38)
                                                 }</div>
-                                                <button className="btn btn-primary">Verfiy Me</button>
+                                                {/* <button className="btn btn-primary">Verfiy Me</button> */}
                                             </div>
                                             
                                         </div>
