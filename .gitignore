@@ -1,6 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-
+.DS_Store
 # Backend
 # dependencies
 backend/node_modules
@@ -50,6 +50,7 @@ contracts/node_modules
 contracts/build
 
 # misc
+contracts/.DS_Store
 contracts/trffle-config.js
 contracts/package-lock.json
 contracts/contracts/.placeholder
