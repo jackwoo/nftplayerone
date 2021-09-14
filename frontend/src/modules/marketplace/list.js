@@ -26,7 +26,6 @@ class List extends Component {
             this.setState({
                 item: res.data
             })
-            // checkListing(res.data.token_id);
         }).catch(e => {
             console.log(e);
         })
@@ -57,15 +56,14 @@ class List extends Component {
             }
 
             let token_id = this.state.item.token_id;
-            console.log(price);
             listItem(token_id, price, address).then(response => {
-                console.log(response);
                 this.setState({
                     isLoading: false,
                     isListed: true,
                 })
                 window.location.href = "/marketplace/" + this.state.item._id;
             }).catch(e => {
+                console.log(e);
                 this.setState({
                     isLoading: false
                 })

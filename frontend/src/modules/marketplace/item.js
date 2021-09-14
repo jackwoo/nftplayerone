@@ -141,7 +141,6 @@ class Item extends Component {
                 this.setState({
                     onLoading: false
                 })
-                console.log(res);
             }).catch(e => {
                 this.setState({
                     showPurchase: true,
@@ -251,7 +250,12 @@ class Item extends Component {
             return (
                 <tr key={i}>
                     <td className="trading-type">{t.event_type}</td>
-                    <td>{t.price ? convertToETH(t.price) : ""}</td>
+                    <td>{t.price ?
+                        <Fragment>
+                            <img className="img-thumb" src="/assets/img/bnb.png" height="16" width="16" alt="thumbnail" />
+                            <span className="trading-price">{convertToETH(t.price)}</span>
+                        </Fragment>
+                        : ""}</td>
                     <td>
                         {from_img &&
                             <img className="m-r-10" alt="profile" src={from_img} width="24px" style={{ "borderRadius": "50%" }} />
@@ -325,10 +329,10 @@ class Item extends Component {
                                                 <button type="button" className="btn btn-secondary item-function-btn" data-tip="Refesh Metadata" onClick={() => this.retrieveData()}>
                                                     <i className="icon dripicons-clockwise"></i>
                                                 </button>
-                                                <button type="button" 
-                                                    class="btn btn-secondary dropdown item-function-btn" 
+                                                <button type="button"
+                                                    class="btn btn-secondary dropdown item-function-btn"
                                                     data-toggle="dropdown" aria-expanded="false" data-tip="Share"
-                                                    style={{"borderTopLeftRadius" : "0px", "borderBottomLeftRadius" : "0px"}}>
+                                                    style={{ "borderTopLeftRadius": "0px", "borderBottomLeftRadius": "0px" }}>
                                                     <i class="zmdi zmdi-share zmdi-hc-fw"></i>
                                                 </button>
                                                 <div class="dropdown-menu menu-icons dropdown-menu-right share-dropdown" x-placement="bottom-start">
@@ -379,7 +383,7 @@ class Item extends Component {
                                         <div className="card">
                                             <div className="card-body">
                                                 <p className="card-text m-b-5"><span className="text-muted m-r-5">Price</span></p>
-                                                <h2 className="card-title m-b-5">{convertToETH(this.state.item.price)}</h2>
+                                                <h2 className="card-title m-b-5"><img className="img-thumb" src="/assets/img/bnb.png" height="20" width="20" alt="thumbnail" /> {convertToETH(this.state.item.price)}</h2>
                                                 {!this.state.item.isOwner &&
                                                     <button className="btn btn-primary" onClick={() => this.showPurchase()}>Buy Now</button>
                                                 }

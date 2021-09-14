@@ -28,6 +28,7 @@ const itemSchema = new mongoose.Schema({
     birthday: { type: Date, default: null},
     image_url: { type: String, default: null},
     name: { type: String, default: null},
+    text: { type: String, default: null},
     verified: { type: Boolean, default: false},
     creator_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     owner: {

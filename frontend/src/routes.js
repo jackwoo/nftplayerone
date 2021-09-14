@@ -9,6 +9,7 @@ import Create from './modules/marketplace/create';
 import Profile from './modules/profile/profile';
 import Wallet from './modules/nav/wallet';
 import List from './modules/marketplace/list';
+import About from './modules/nav/about';
 
 class AllRoutes extends Component {
   render() {
@@ -23,6 +24,7 @@ class AllRoutes extends Component {
           <Route exact path="/marketplace/:item/sell" component={List} />
           <Route exact path="/profile" component={Profile} />
           <Route exact path="/wallet" component={Wallet} />
+          <Route exact path="/about" component={About} />
         </Switch>
       </Fragment>
     );

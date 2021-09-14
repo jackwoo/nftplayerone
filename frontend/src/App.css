@@ -48,7 +48,7 @@
   max-width: 768px;
   padding: 0px 10px;
   margin-top: 10px;
-  width: 300px;
+  width: 450px;
 }
 
 .nav-search-bar-input {
@@ -95,13 +95,9 @@
 
 .featured-background {
   height: 600px;
-  background-size: cover;
-  background-color: rgb(255, 255, 255);
-  background-position: center center;
   opacity: 0.1;
   filter: blur(8px);
   display: flex;
-  background-image: url("https://miro.medium.com/max/3864/1*YS9MGZ3RR_9NwW4hpwAL7A.png");
 }
 
 .home-featured-section {
@@ -110,7 +106,7 @@
 
 .home-featured-section .featured-title {
   font-size: 32px;
-  color: #313131;
+  color: #a0b3c6;
   font-weight: 600;
 }
 
@@ -118,7 +114,7 @@
   margin-top: 20px;
   margin-bottom: 40px;
   font-size: 22px;
-  color: #313131;
+  color: #a0b3c6;
 }
 
 .home-featured-section .featured-btn {
@@ -140,6 +136,12 @@
   }
   .home-featured-section .featured-btn {
     margin-bottom: 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-search-bar-container {
+    width: 300px;
   }
 }
 
@@ -316,7 +318,7 @@
   margin-right: auto;
   margin-left: auto;
   height: 70px;
-  background-color: rgb(251, 253, 255);
+  /* background-color: rgb(251, 253, 255); */
   border-bottom: 1px solid rgb(229, 232, 235);
 }
 
@@ -468,4 +470,113 @@
   transform: rotate( -180deg);
   margin-top: -17px;
   transition: all .2s ease;
+}
+
+.trading-price {
+  margin-left: 5px;
+}
+
+.app-logo {
+  display: flex !important;
+}
+
+.app-logo img {
+  width: 120px;
+  padding: 0px 10px;
+}
+
+.item-list-detail {
+  display: flex;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+}
+
+.item-list-detail-info {
+  min-width: 0px;
+  flex: 2 0 0%;
+}
+
+.item-list-detail-info h5 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.item-list-detail-info .text-muted {
+  font-size: .8rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.item-list-detail-price {
+  flex: 1 0 0%;
+  max-width: 50%;
+  align-items: flex-end;
+  flex-direction: column;
+  display: flex;
+}
+
+.item-list-detail-price .text-muted {
+  font-size: .8rem;
+}
+
+.item-list-detail-price span {
+  padding-left: 5px;
+}
+
+.about-section .title {
+  font-size: 28px;
+  line-height: 38px;
+  font-weight: 400;
+  margin-bottom: 16px;
+  color: #399af2;
+}
+
+.about-section .content {
+  font-size: 16px;
+  font-weight: 400;
+  color: #a0b3c6;
+  letter-spacing: .1px;
+  line-height: 28px;
+}
+
+.card {
+  background: #28313a !important;
+  box-shadow: none !important;
+  border: 1px solid #a0b3c6;
+}
+
+.create-card textarea {
+  background: none;
+}
+
+body .top-toolbar {
+  background: #28313a !important;
+  box-shadow: none !important;
+}
+
+.top-toolbar .dropdown-menu-md .dropdown-menu.dropdown-menu-right {
+  background: #28313a;
+  border: 1px solid grey;
+  box-shadow: none;
+}
+
+.flashing-content{
+  animation: sampleanimation 1s infinite;
+}
+
+@keyframes sampleanimation {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 100;
+  }
+  50% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 100;
+  }
 }

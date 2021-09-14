@@ -46,7 +46,7 @@ class Profile extends Component {
     }
 
     getProfile(address) {
-        UserModel.retrieve(address).then(res => {
+        UserModel.profile(address).then(res => {
             this.setState({
                 profile: res.data
             })
@@ -108,15 +108,15 @@ class Profile extends Component {
                                                 }</div>
                                                 {/* <button className="btn btn-primary">Verfiy Me</button> */}
                                             </div>
-                                            
+
                                         </div>
 
                                         <ul className="nav nav-pills nav-pills-primary" id="pills-demo-4" role="tablist">
                                             <li className="nav-item">
-                                                <a className="nav-link active show" id="pills-9-tab" data-toggle="pill" href="#pills-9" role="tab" aria-controls="pills-9" aria-selected="true">My NFT</a>
+                                                <a className="nav-link active show" id="pills-9-tab" data-toggle="pill" href="#pills-9" role="tab" aria-controls="pills-9" aria-selected="true">In Wallet</a>
                                             </li>
                                             <li className="nav-item">
-                                                <a className="nav-link" id="pills-10-tab" data-toggle="pill" href="#pills-10" role="tab" aria-controls="pills-10" aria-selected="true">In Wallet</a>
+                                                <a className="nav-link" id="pills-10-tab" data-toggle="pill" href="#pills-10" role="tab" aria-controls="pills-10" aria-selected="true">My Creation</a>
                                             </li>
                                             <li className="nav-item">
                                                 <a className="nav-link" id="pills-11-tab" data-toggle="pill" href="#pills-11" role="tab" aria-controls="pills-11" aria-selected="false">Activity</a>
@@ -126,44 +126,22 @@ class Profile extends Component {
                                     <div className="card-body">
                                         <div className="tab-content" id="pills-tabContent-4">
                                             <div className="tab-pane fade active show" id="pills-9" role="tabpanel" aria-labelledby="pills-12">
-                                                {this.state.profile.nft ?
-                                                    <div className="row">
-                                                        <div className="col-xs-6 col-md-6 col-lg-4 col-xl-3">
-                                                            <div className="card p-20">
-                                                                <a href={"/marketplace/" + this.state.profile.nft._id}>
-                                                                    <img className="card-img-top" src={this.state.profile.nft.image_url} alt="" />
-                                                                    <div className="card-body p-10">
-                                                                        <div className="row m-t-20">
-                                                                            <div className="col-7">
-                                                                                <h5 className="m-b-6">{this.state.profile.nft.name}</h5>
-                                                                            </div>
-                                                                            <div className="text-right col-5">
-                                                                                {this.state.profile.nft.listed &&
-                                                                                    <p className="card-text">
-                                                                                        <img className="img-thumb" src="/assets/img/bnb.png" height="16" width="16" alt="" />
-                                                                                        <span className="text-muted p-l-5">{convertToETH(this.state.profile.nft.price)}</span>
-                                                                                    </p>
-                                                                                }
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    :
-                                                    <div className="col-12 p-30 text-center">
-                                                        <h2>You have yet to create your NFT, create it now!</h2>
-                                                        <Link to="/mynft">
-                                                            <button className="btn btn-primary m-t-20">Create NFT</button>
-                                                        </Link>
-                                                    </div>
-                                                }
-
+                                                <div className="row">
+                                                    {this.renderItem(this.state.items)}
+                                                </div>
                                             </div>
                                             <div className="tab-pane fade" id="pills-10" role="tabpanel" aria-labelledby="pills-10">
                                                 <div className="row">
-                                                    {this.renderItem(this.state.items)}
+                                                    {this.state.profile.nft ?
+                                                        this.renderItem(this.state.profile.nft)
+                                                        :
+                                                        <div className="col-12 p-30 text-center">
+                                                            <h2>You have yet to create your NFT, create it now!</h2>
+                                                            <Link to="/mynft">
+                                                                <button className="btn btn-primary m-t-20">Create NFT</button>
+                                                            </Link>
+                                                        </div>
+                                                    }
                                                 </div>
                                             </div>
                                             <div className="tab-pane fade" id="pills-11" role="tabpanel" aria-labelledby="pills-11">
@@ -225,7 +203,7 @@ class Profile extends Component {
                                                                     <tr key={i}>
                                                                         <td className="trading-type">{t.event_type}</td>
                                                                         <td>{t.item_id &&
-                                                                            <Link to={"/marketplace" + t.item_id._id}>
+                                                                            <Link to={"/marketplace/" + t.item_id._id}>
                                                                                 <img className="m-r-10" alt="profile" src={t.item_id.image_url} width="24px" style={{ "borderRadius": "50%" }} />
                                                                                 <span>{t.item_id.name}</span>
                                                                             </Link>

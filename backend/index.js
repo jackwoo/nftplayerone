@@ -2,7 +2,8 @@ const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
 const ethers = require('ethers');
-const Market = require(process.env.CONTRACT_ADDRESS);
+const Market = require(process.env.CONTRACT_ADDRESS_MARKET);
+const NFT = require(process.env.CONTRACT_ADDRESS_NFT)
 const multer = require("multer");
 const path = require('path');
 const fs = require("fs");
@@ -70,8 +71,7 @@ app.post("/connect", async function (req, res) {
     }
 })
 
-// API: get user profile and created nft
-app.get("/:address/user", async function (req, res) {
+app.get("/:address/creation", async function(req, res){
     try {
         let user_proj = {
             active: false,
@@ -88,8 +88,8 @@ app.get("/:address/user", async function (req, res) {
                 updated_at: false,
                 __v: false
             }
-            let item = await Item.findOne({ creator_id: ToObjectId(user._id) }, projection);
 
+            let item = await Item.find({ creator_id: ToObjectId(user._id) }, projection);
             let tras_select = {
                 event_type: true,
                 price: true,
@@ -117,6 +117,22 @@ app.get("/:address/user", async function (req, res) {
             user["nft"] = item;
             user["tradings"] = tras;
         }
+        return res.status(200).json(user)
+    } catch (e) {
+        return res.status(500).json(server_err);
+    }
+})
+
+// API: get user profile and created nft
+app.get("/:address/user", async function (req, res) {
+    try {
+        let user_proj = {
+            active: false,
+            created_at: false,
+            updated_at: false,
+            __v: false
+        }
+        let user = await User.findOne({ address: req.params.address }, user_proj).lean();
         return res.status(200).json(user)
     } catch (e) {
         return res.status(500).json(server_err);
@@ -167,7 +183,7 @@ app.get('/:address/item', async function (req, res) {
 
 app.get('/item/featured', async function (req, res) {
     let projection = {
-        name: true,
+        text: true,
         image_url: true,
         owner: true,
         price: true,
@@ -390,6 +406,12 @@ const listenToEvents = () => {
         provider
     )
 
+    const nft = new ethers.Contract(
+        NFT.networks[networkId].address,
+        NFT.abi,
+        provider
+    )
+
     // Hook to listing event on blockchain
     // Check if listing event is completed
     // Update the item listing status on the db
@@ -420,7 +442,7 @@ const listenToEvents = () => {
     // Hook to mint event on blockchain
     // Check if mint event is completed
     // Create the creation transaction and item on db
-    market.on('Mint', async (token_id, creator, tokenurl, timestamp) => {
+    nft.on('Mint', async (token_id, creator, tokenurl, timestamp) => {
         creator = await User.findOne({ address: creator })
 
         let transaction = await Transaction.create({
@@ -441,12 +463,25 @@ const listenToEvents = () => {
             console.log(err);
         }
 
+        // let item = await Item.create({
+        //     token_id: token_id,
+        //     name: metadata.name,
+        //     image_url: metadata.image_url,
+        //     gender: metadata.gender,
+        //     birthday: metadata.birthday,
+        //     creator_id: ToObjectId(creator._id),
+        //     owner: {
+        //         owner_id: ToObjectId(creator._id),
+        //         transcation_id: ToObjectId(transaction._id)
+        //     }
+        // });
         let item = await Item.create({
             token_id: token_id,
-            name: metadata.name,
-            image_url: metadata.image_url,
-            gender: metadata.gender,
-            birthday: metadata.birthday,
+            // name: metadata.name,
+            // image_url: metadata.image_url,
+            // gender: metadata.gender,
+            // birthday: metadata.birthday,
+            text: metadata.text,
             creator_id: ToObjectId(creator._id),
             owner: {
                 owner_id: ToObjectId(creator._id),

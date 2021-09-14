@@ -9,6 +9,10 @@ class UserModel {
     async retrieve(address){
       return axios.get(API_HOST + "/" + address + "/user");
     }
+
+    async profile(address){
+      return axios.get(API_HOST + "/" + address + "/creation");
+    }
 }
 
 export default new UserModel();
