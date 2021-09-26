@@ -15,7 +15,10 @@ mongoose.connect(
 // Create user schema and model
 const userSchema = new mongoose.Schema({
     address: String,
-    username: { type: String, default: null},
+    nickname: { type: String, default: null},
+    fullname: { type: String, default: null},
+    gender: { type: Number, default: 0},
+    dob: { type: String, default: null},
     image_url: { type: String, default: null},
     active: { type: Boolean, default: true}
 }, {

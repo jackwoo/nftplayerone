@@ -1,12 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import {
     getCurrentWallet,
-    convertToETH
 } from "../../libs/interact";
-import ItemModel from "../../libs/ItemModel";
-import UserModel from '../../libs/UserModel';
-import moment from 'moment';
+import UserModel from '../../model/UserModel';
+import moment from "moment";
+import { Modal } from "react-bootstrap";
 const API_HOST = process.env.REACT_APP_API_URL;
 
 class Profile extends Component {
@@ -16,7 +15,9 @@ class Profile extends Component {
             connected: false,
             walletAddress: "",
             items: [],
-            profile: {}
+            profile: {},
+            fields: {},
+            showProfile: false
         }
     }
 
@@ -27,217 +28,236 @@ class Profile extends Component {
                     walletAddress: res.address,
                     connected: true
                 })
-                this.getOwnedItem(res.address);
-                this.getProfile(res.address);
             } else {
-                this.props.history.push("/wallet");
+                window.location.replace("/");
             }
         })
-    }
-
-    getOwnedItem(address) {
-        ItemModel.listOwned(address).then(res => {
+        if(this.props.newUser){
             this.setState({
-                items: res.data
+                showProfile: true
             })
-        }).catch(e => {
-            console.log(e)
-        })
-    }
-
-    getProfile(address) {
-        UserModel.profile(address).then(res => {
-            this.setState({
-                profile: res.data
-            })
-        })
-    }
-
-    renderItem = (data) => {
-        if (data) {
-            return data.map((c, i) => {
-                return (
-                    <div className="col-xs-6 col-md-6 col-lg-4 col-xl-3" key={i}>
-                        <div className="card p-20">
-                            <a href={"/marketplace/" + c._id}>
-                                <img className="card-img-top" src={c.image_url} alt="" />
-                                <div className="card-body p-10">
-                                    <div className="row m-t-20">
-                                        <div className="col-7">
-                                            <h5 className="m-b-6">{c.name}</h5>
-                                        </div>
-                                        <div className="text-right col-5">
-                                            {c.listed &&
-                                                <p className="card-text">
-                                                    <img className="img-thumb" src="/assets/img/bnb.png" height="16" width="16" alt="" />
-                                                    <span className="text-muted p-l-5">{convertToETH(c.price)}</span>
-                                                </p>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                )
-            })
-        } else {
-            return "";
         }
+        this.getProfile();
+    }
+
+
+    getProfile() {
+        UserModel.profile().then(res => {
+            let fields = {};
+            fields["nickname"] = res.data.nickname;
+            fields["fullname"] = res.data.fullname;
+            if(res.data.dob){
+                let dob = res.data.dob.split("-");
+                fields["dobY"] = dob[0];
+                fields["dobM"] = dob[1];
+                fields["dobD"] = dob[2];
+            }
+
+            this.setState({
+                profile: res.data,
+                fields: fields
+            })
+        })
+    }
+
+    saveProfile() {
+		let fields = this.state.fields;
+		let data = {}
+		if(fields.nickname){
+			data["nickname"] = fields.nickname;
+		}
+
+		if(fields.fullname){
+			data["fullname"] = fields.fullname;
+		}
+
+		if(fields.gender){
+			data["gender"] = fields.gender;
+		}
+
+		if(fields.dobY && fields.dobM && fields.dobD){
+			data["dob"] = `${fields.dobY}-${fields.dobM}-${fields.dobD}`;
+		}
+
+		UserModel.updateProfile(data).then(res => {
+			console.log(res.data);
+		}).catch(e => {
+			console.log(e);
+		})
+		window.location.reload();
+	}
+
+	handleChange(field, e) {
+		let fields = this.state.fields;
+		fields[field] = e.target.value;
+		this.setState({ fields });
+	}
+
+	closeProfile() {
+		this.setState({
+			showProfile: false
+		})
+	}
+
+    renderDobY() {
+		let options = []
+		for (let i = moment().year(); i > 1900; i--) {
+			options.push(i);
+		}
+
+		return (
+			<Fragment>
+				<option disabled selected>YYYY</option>
+				{
+					options.map(function (mark, i) {
+						return <option
+							key={i}
+							value={mark}>
+							{mark}
+						</option>
+					})
+				}
+			</Fragment>
+		);
+	}
+
+	renderDobM() {
+		let options = []
+		for (let i = 1; i < 13; i++) {
+			options.push(i);
+		}
+
+		return <Fragment>
+			<option disabled selected>MM</option>
+			{
+				options.map(function (mark, i) {
+					return <option
+						key={i}
+						value={mark}>
+						{mark}
+					</option>
+				})
+			}
+		</Fragment>
+	}
+
+	renderDobD() {
+		let options = []
+		for (let i = 1; i < 32; i++) {
+			options.push(i);
+		}
+
+		return <Fragment>
+			<option disabled selected>DD</option>
+			{
+				options.map(function (mark, i) {
+					return <option
+						key={i}
+						value={mark}>
+						{mark}
+					</option>
+				})
+			}
+		</Fragment>
+	}
+
+    openProfile(){
+        this.setState({
+            showProfile: true
+        })
     }
 
     render() {
         return (
-            <div className="content-wrapper">
-                <div className="content container">
-                    <section className="page-content">
-                        <div className="row">
-                            <div className="col-12">
-                                <div className="card card-pills">
-                                    <div className="card-header">
-                                        <div className="row m-b-50">
-                                            <div className="col-md-2 col-4">
-                                                <img className="profile-image" src={this.state.profile.image_url ? API_HOST + this.state.profile.image_url : "/assets/img/default.jpg"} alt="profile" />
-                                            </div>
-                                            <div className="col-md-10 col-8">
-                                                <div className="fb-page-title">{this.state.profile.username ? this.state.profile.username : "Unnamed"}</div>
-                                                <div className="fb-page-description">{
-                                                    String(this.state.walletAddress).substring(0, 6) +
-                                                    "..." +
-                                                    String(this.state.walletAddress).substring(38)
-                                                }</div>
-                                                {/* <button className="btn btn-primary">Verfiy Me</button> */}
-                                            </div>
-
-                                        </div>
-
-                                        <ul className="nav nav-pills nav-pills-primary" id="pills-demo-4" role="tablist">
-                                            <li className="nav-item">
-                                                <a className="nav-link active show" id="pills-9-tab" data-toggle="pill" href="#pills-9" role="tab" aria-controls="pills-9" aria-selected="true">In Wallet</a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a className="nav-link" id="pills-10-tab" data-toggle="pill" href="#pills-10" role="tab" aria-controls="pills-10" aria-selected="true">My Creation</a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a className="nav-link" id="pills-11-tab" data-toggle="pill" href="#pills-11" role="tab" aria-controls="pills-11" aria-selected="false">Activity</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="card-body">
-                                        <div className="tab-content" id="pills-tabContent-4">
-                                            <div className="tab-pane fade active show" id="pills-9" role="tabpanel" aria-labelledby="pills-12">
-                                                <div className="row">
-                                                    {this.renderItem(this.state.items)}
-                                                </div>
-                                            </div>
-                                            <div className="tab-pane fade" id="pills-10" role="tabpanel" aria-labelledby="pills-10">
-                                                <div className="row">
-                                                    {this.state.profile.nft ?
-                                                        this.renderItem(this.state.profile.nft)
-                                                        :
-                                                        <div className="col-12 p-30 text-center">
-                                                            <h2>You have yet to create your NFT, create it now!</h2>
-                                                            <Link to="/mynft">
-                                                                <button className="btn btn-primary m-t-20">Create NFT</button>
-                                                            </Link>
-                                                        </div>
-                                                    }
-                                                </div>
-                                            </div>
-                                            <div className="tab-pane fade" id="pills-11" role="tabpanel" aria-labelledby="pills-11">
-                                                <h4> Trading History</h4>
-                                                <div className="table-responsive">
-                                                    <table className="table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Event</th>
-                                                                <th>Item</th>
-                                                                <th>Price</th>
-                                                                <th>From</th>
-                                                                <th>To</th>
-                                                                <th>Date</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {this.state.profile.tradings?.map((t, i) => {
-                                                                let from_name = "";
-                                                                let from_img = false;
-                                                                if (t.from_account != null) {
-                                                                    from_name = t.from_account.address ? String(t.from_account.address).substring(0, 6).toUpperCase() : "";
-                                                                    from_img = t.from_account.image_url ? t.from_account.image_url : "/assets/img/default.jpg";
-                                                                }
-
-                                                                let to_name = "";
-                                                                let to_img = false;
-                                                                if (t.to_account != null) {
-                                                                    to_name = t.to_account.address ? String(t.to_account.address).substring(0, 6).toUpperCase() : "";
-                                                                    to_img = t.to_account.image_url ? t.to_account.image_url : "/assets/img/default.jpg";
-                                                                }
-
-                                                                let current = moment();
-                                                                let happened = moment(t.updated_at);
-                                                                let time_dif = moment.duration(current.diff(happened));
-                                                                let time_pasted = time_dif.asSeconds();
-                                                                let time_unit = "second";
-                                                                if (time_pasted > 60) {
-                                                                    time_pasted = time_dif.asMinutes();
-                                                                    time_unit = "mins";
-                                                                    if (time_pasted > 60) {
-                                                                        time_pasted = time_dif.asHours();
-                                                                        time_unit = "hours";
-                                                                        if (time_pasted > 24) {
-                                                                            time_pasted = time_dif.asDays();
-                                                                            time_unit = "days";
-                                                                            if (time_pasted > 30) {
-                                                                                time_pasted = time_dif.asMonths();
-                                                                                time_unit = "months";
-                                                                                if (time_pasted > 12) {
-                                                                                    time_pasted = time_dif.asYears();
-                                                                                    time_unit = "years";
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                                return (
-                                                                    <tr key={i}>
-                                                                        <td className="trading-type">{t.event_type}</td>
-                                                                        <td>{t.item_id &&
-                                                                            <Link to={"/marketplace/" + t.item_id._id}>
-                                                                                <img className="m-r-10" alt="profile" src={t.item_id.image_url} width="24px" style={{ "borderRadius": "50%" }} />
-                                                                                <span>{t.item_id.name}</span>
-                                                                            </Link>
-                                                                        }</td>
-                                                                        <td>{t.price ? convertToETH(t.price) : ""}</td>
-                                                                        <td>
-                                                                            {from_img &&
-                                                                                <img className="m-r-10" alt="profile" src={from_img} width="24px" style={{ "borderRadius": "50%" }} />
-                                                                            }
-                                                                            <span>{from_name}</span>
-                                                                        </td>
-                                                                        <td>
-                                                                            {to_img &&
-                                                                                <img className="m-r-10" alt="profile" src={to_img} width="24px" style={{ "borderRadius": "50%" }} />
-                                                                            }
-                                                                            <span>{to_name}</span>
-                                                                        </td>
-                                                                        <td>{Math.floor(time_pasted) + " " + time_unit + " ago"}</td>
-                                                                    </tr>
-                                                                )
-                                                            })}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+            <Fragment>
+                <div className="col-12">
+                    <div className="card card-pills">
+                        <div className="card-header">
+                            <div className="d-flex m-b-50">
+                                <div>
+                                    <img className="profile-image" src={this.state.profile.image_url ? API_HOST + this.state.profile.image_url : "/assets/img/default.jpg"} alt="profile" width="50" />
+                                </div>
+                                <div className="p-l-10">
+                                    <h4>{this.state.profile.nickname ? this.state.profile.nickname : "Unnamed"}</h4>
+                                    <div className="fb-page-description">{
+                                        String(this.state.walletAddress).substring(0, 6) +
+                                        "..." +
+                                        String(this.state.walletAddress).substring(38)
+                                    }</div>
                                 </div>
                             </div>
                         </div>
-                    </section>
+                        <div className="card-body">
+                            <div className="d-flex flex-column side-nav">
+                                <div className="p-2"><Link to="/home">Home</Link></div>
+                                <div className="p-2"><Link to="/creation">Moments Minted</Link></div>
+                                <div className="p-2"><Link to="/inwallet">NFTs Owned</Link></div>
+                                <div className="p-2"><Link to="/activity">My Activity</Link></div>
+                                <div className="p-2"><button className="btn profile-btn" onClick={() => this.openProfile()}>My Profile</button></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                <Modal dialogClassName="modal-lg" show={this.state.showProfile} onHide={() => this.closeProfile()} centered>
+					<Modal.Header className="align-items-center" closeButton>
+						<h2 className="text-center m-0">My Profile</h2>
+					</Modal.Header>
+					<Modal.Body>
+						<div className="container">
+							<div className="form-group">
+								<label for="demoTextInput1">Nickname*</label>
+								<div className="input-group mb-2 mr-sm-2">
+									<input type="text" className="form-control" placeholder="Nickename" onChange={this.handleChange.bind(this, "nickname")}
+										value={this.state.fields["nickname"]} />
+								</div>
+							</div>
+							<div className="form-group">
+								<label for="demoTextInput1">Full Name</label>
+								<div className="input-group mb-2 mr-sm-2">
+									<input type="text" className="form-control" placeholder="Full name" onChange={this.handleChange.bind(this, "fullname")}
+										value={this.state.fields["fullname"]} />
+								</div>
+							</div>
+							<div className="form-group">
+								<label for="demoTextInput1">Gender</label>
+								<div className="input-group mb-2 mr-sm-2">
+									<select class="form-control form-select" onChange={this.handleChange.bind(this, "gender")}
+										value={this.state.fields["gender"]}>
+										<option value="1">Male</option>
+										<option value="2">Female</option>
+										<option value="0">Don't want to disclose</option>
+									</select>
+								</div>
+							</div>
+							<div className="form-group">
+								<label for="demoTextInput1">Date of Birth</label>
+								<div className="d-flex">
+									<select class="form-control form-select m-2" onChange={this.handleChange.bind(this, "dobY")}
+										value={this.state.fields["dobY"]}>
+										{this.renderDobY()}
+									</select>
+									<select class="form-control form-select m-2" onChange={this.handleChange.bind(this, "dobM")}
+										value={this.state.fields["dobM"]}>
+										{this.renderDobM()}
+									</select>
+									<select class="form-control form-select m-2" onChange={this.handleChange.bind(this, "dobD")}
+										value={this.state.fields["dobD"]}>
+										{this.renderDobD()}
+									</select>
+								</div>
+							</div>
+						</div>
 
+					</Modal.Body>
+					<Modal.Footer className="justify-content-center">
+						<div className="text-center">
+							<button className="btn btn-primary" onClick={() => this.saveProfile()}>
+								Save
+							</button>
+						</div>
+					</Modal.Footer>
+				</Modal>
+            </Fragment>
         )
     }
 }

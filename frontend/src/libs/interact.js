@@ -22,7 +22,7 @@ const web3Modal = new Web3Modal({
   }
 })
 
-var web3;
+var web3 = new Web3(provider);
 var provider;
 var accounts;
 var address;

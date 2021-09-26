@@ -71,6 +71,38 @@
   width: 100%;
 }
 
+#footer {
+  background-color: rgba(15, 19, 22, 0.94);
+  width: 100%;
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 16px 0;
+  -ms-flex-align: center;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  border-top: 1px solid #383b44;
+}
+
+#footer .dropdown-item {
+  color: #a0b3c6;
+}
+
+.connect-btn {
+  color: #181e24;
+  background-image: linear-gradient( 0deg, #499bfc 0, #6eaef9 100%);
+  border: none;
+  font-size: 1.2rem;
+  height: auto;
+}
+
+#footer .dropdown-item:hover {
+  background-color: transparent;
+}
+
 .rounded-image-container {
   border-radius: 50%;
   height: 30px;
@@ -104,17 +136,54 @@
   padding: 60px 20px 44px 30px;
 }
 
-.home-featured-section .featured-title {
-  font-size: 32px;
-  color: #a0b3c6;
-  font-weight: 600;
+.padding-xl {
+  padding-top: 48px;
+  padding-bottom: 48px;
 }
 
-.home-featured-section .featured-subtitle {
-  margin-top: 20px;
-  margin-bottom: 40px;
-  font-size: 22px;
-  color: #a0b3c6;
+.center {
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
+}
+
+.featured-title {
+  font-size: 44px;
+  line-height: 50px;
+  font-weight: 400;
+  letter-spacing: -1px;
+  line-height: 58px;
+  margin-bottom: 28px;
+  background: -webkit-linear-gradient(#bbc1cf, #95a8c9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.featured-subtitle {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 32px;
+  background: -webkit-linear-gradient(#bbc1cf, #95a8c9);
+  -webkit-background-clip: text;
+  /* -webkit-text-fill-color: transparent; */
+}
+
+.highlight-blue {
+  color: #33ced8;
+}
+
+.highlight-yellow {
+  color: #f0be72;
+}
+
+.try-now-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.try-now-btn:focus {
+  outline: none
 }
 
 .home-featured-section .featured-btn {
@@ -523,6 +592,7 @@
 
 .item-list-detail-price span {
   padding-left: 5px;
+  color: white;
 }
 
 .about-section .title {
@@ -562,8 +632,20 @@ body .top-toolbar {
   box-shadow: none;
 }
 
-.flashing-content{
+.flashing-content {
   animation: sampleanimation 1s infinite;
+}
+
+.msg-creator-name, .side-nav a {
+  color: #399af2;
+}
+
+.profile-btn {
+  font-size: 1em;
+  background: none;
+  color: #399af2;
+  height: auto;
+  padding: 0px;
 }
 
 @keyframes sampleanimation {

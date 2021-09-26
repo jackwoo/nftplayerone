@@ -1,12 +1,16 @@
 const express = require('express');
 require('dotenv').config();
+
 const cors = require('cors');
+
 const ethers = require('ethers');
 const Market = require(process.env.CONTRACT_ADDRESS_MARKET);
 const NFT = require(process.env.CONTRACT_ADDRESS_NFT)
+
 const multer = require("multer");
 const path = require('path');
 const fs = require("fs");
+
 const axios = require("axios");
 
 // To create folders to store uploaded files
@@ -30,12 +34,13 @@ const {
     ToObjectId
 } = require('./mongoUtil.js');
 
+
 let app = express();
 /* Express Settings */
 app.use(express.json())
 app.use(cors());
 app.use(express.static('public'))
-app.options('*', cors());
+app.options('**', cors());
 app.listen(8000);
 
 // Return status with message
@@ -49,27 +54,9 @@ const server_err = {
     message: "Server Error"
 }
 
-/* User */
-// API: connect user wallet
-// If wallet address not exists in user schema, create user
-
-app.post("/connect", async function (req, res) {
-    if (!req.body.address) {
-        res.sendStatus = 400;
-        return res.json(invalid_input)
-    }
-    try {
-        let user = await User.find({ address: req.body.address });
-        if (user.length == 0) {
-            user = await User.create({
-                address: req.body.address
-            })
-        }
-        return res.status(200).json({ "message": "connected" })
-    } catch (e) {
-        return res.status(500).json(server_err);
-    }
-})
+const api = {
+    users: require("./routes/users.js")
+}
 
 app.get("/:address/creation", async function(req, res){
     try {
@@ -150,9 +137,16 @@ app.get('/item', async function (req, res) {
             listing_id: false,
             created_at: false,
             updated_at: false,
+            birthday: false,
+            gender: false,
+            name: false,
             __v: false
         }
-        let items = await Item.find({ listed: true }, projection);
+        // let items = await Item.find({ listed: true }, projection);
+        let items = await Item.find({ listed: true  }, projection).populate({
+            path: "owner.owner_id",
+            select: "nickname image_url address -_id"
+        }).lean();
         return res.status(200).json(items);
     } catch (e) {
         return res.status(500).json(server_err);
@@ -386,13 +380,8 @@ app.post(
     }
 );
 
-function isEmptyObject(obj) {
-    for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-            return false;
-        }
-    }
-    return true;
+async function main(){
+    app.use("/api/user", express.json(), api.users);
 }
 
 // Webhook on ethers to check transaction status
@@ -463,24 +452,8 @@ const listenToEvents = () => {
             console.log(err);
         }
 
-        // let item = await Item.create({
-        //     token_id: token_id,
-        //     name: metadata.name,
-        //     image_url: metadata.image_url,
-        //     gender: metadata.gender,
-        //     birthday: metadata.birthday,
-        //     creator_id: ToObjectId(creator._id),
-        //     owner: {
-        //         owner_id: ToObjectId(creator._id),
-        //         transcation_id: ToObjectId(transaction._id)
-        //     }
-        // });
         let item = await Item.create({
             token_id: token_id,
-            // name: metadata.name,
-            // image_url: metadata.image_url,
-            // gender: metadata.gender,
-            // birthday: metadata.birthday,
             text: metadata.text,
             creator_id: ToObjectId(creator._id),
             owner: {
@@ -586,4 +559,14 @@ const listenToEvents = () => {
     })
 }
 
+main();
 listenToEvents();
+
+function isEmptyObject(obj) {
+    for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            return false;
+        }
+    }
+    return true;
+}

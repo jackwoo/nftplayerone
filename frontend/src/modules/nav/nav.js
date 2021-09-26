@@ -6,7 +6,7 @@ import {
     connectWallet,
     convertToETH
 } from "../../libs/interact";
-import UserModel from "../../libs/UserModel";
+import UserModel from "../../model/UserModel";
 
 class Nav extends Component {
     constructor(props) {
@@ -26,7 +26,6 @@ class Nav extends Component {
                     isWalletConnected: true,
                     walletAddress: response.address
                 })
-                this.getProfile(response.address);
                 this.getBalance(response.address);
             }
         })
@@ -36,14 +35,6 @@ class Nav extends Component {
         getCurrentWalletBalance(address).then(res => {
             this.setState({
                 walletBalance: convertToETH(res)
-            })
-        })
-    }
-
-    getProfile(address) {
-        UserModel.retrieve(address).then(res => {
-            this.setState({
-                profile: res.data
             })
         })
     }
@@ -90,71 +81,17 @@ class Nav extends Component {
     render() {
         return (
             <Fragment>
-                <nav id="my-nav" class="top-toolbar navbar navbar-mobile navbar-tablet">
-                    <ul class="navbar-nav nav-left">
-                        <li class="nav-item">
-                            <a href="/" data-toggle-state="aside-left-open">
-                                <img src="./assets/img/NPO_logo_v1.0.svg" alt="app logo" />
-                            </a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav nav-right">
-                        <li class="nav-item">
-                            <a href="javascript:void(0)" data-toggle-state="mobile-topbar-toggle">
-                                <i class="icon dripicons-dots-3 rotate-90"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <nav class="top-toolbar navbar navbar-desktop flex-nowrap">
-                    <ul class="navbar-nav nav-left">
-                        <li className="nav-item">
-                            <a href="/" className="app-logo">
-                                <img src="./assets/img/NPO_logo_v1.0.svg" alt="app logo" />
-                            </a>
-                        </li>
-                    </ul>
-                    <ul className="navbar-nav nav-right">
-                        <li className="nav-item nav-text dropdown dropdown-menu-md">
-                            <a href="/marketplace">
-                                <span>
-                                    Marketplace
-                                </span>
-                            </a>
-                        </li>
-                        <li className="nav-item nav-text dropdown dropdown-menu-md">
-                            <a href="#!" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                <span>
-                                    Resources&nbsp;
-                                </span>
-                                <i className="la la-angle-down menu-arrow-down"></i>
-                            </a>
-                            <div className="dropdown-menu menu-icons dropdown-menu-right">
-                                <ul className="list-reset filter-list">
-                                    <li><a className="dropdown-item" href="/about">About</a></li>
-                                    <div className="dropdown-divider"></div>
-                                    <li><a className="dropdown-item" target="_blank" href="https://medium.com/@nftplayerone">Blog</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li className="nav-item dropdown">
-                            <a className="nav-link nav-pill user-avatar nav-image-rounded" href="/profile">
-                                <div className="rounded-image-container">
-                                    {this.state.isWalletConnected ?
-                                        <img src={this.state.profile.image_url ? this.state.profile.image_url : "/assets/img/default.jpg"} className="w-35 rounded-circle" alt="profile" />
-                                        :
-                                        <i className="la la-user"></i>
-                                    }
-                                </div>
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a href="#!" data-toggle-state="aside-right-open">
-                                <i className="icon dripicons-wallet"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+                <footer id="footer" className="d-flex justify-content-between p-15">
+                    <div className="d-flex">
+                        <a className="dropdown-item" href="/about">About</a>
+                        <a className="dropdown-item" target="_blank" href="https://medium.com/@nftplayerone">Blog</a>
+                    </div>
+                    <div className="d-flex">
+                        <a href="javascript:void(0)" data-toggle-state="aside-right-open">
+                            <i className="icon dripicons-wallet"></i>
+                        </a>
+                    </div>
+                </footer>
 
                 <aside className="sidebar sidebar-right">
                     <div className="sidebar-content">

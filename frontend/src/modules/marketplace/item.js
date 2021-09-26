@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import ItemModel from '../../libs/ItemModel';
+import ItemModel from '../../model/ItemModel';
 import {
     getCurrentWallet,
     purchaseItem,
@@ -314,70 +314,61 @@ class Item extends Component {
                         <section className="page-content">
                             <div className="row">
                                 <div className="col-md-12 col-lg-5">
-                                    <div className="card text-center p-20">
-                                        <img className="card-img-top" src={this.state.item.image_url} alt="" />
+                                    <div className="card p-20">
+                                        <p>{this.state.item.text}</p>
                                     </div>
                                 </div>
 
                                 <div className="col-md-12 col-lg-7">
-                                    <section className="m-b-15">
-                                        <div className="row">
-                                            <div className="col-6">
-                                                <h1>{this.state.item.name}</h1>
-                                            </div>
-                                            <div className="col-6 text-right">
-                                                <button type="button" className="btn btn-secondary item-function-btn" data-tip="Refesh Metadata" onClick={() => this.retrieveData()}>
-                                                    <i className="icon dripicons-clockwise"></i>
-                                                </button>
-                                                <button type="button"
-                                                    class="btn btn-secondary dropdown item-function-btn"
-                                                    data-toggle="dropdown" aria-expanded="false" data-tip="Share"
-                                                    style={{ "borderTopLeftRadius": "0px", "borderBottomLeftRadius": "0px" }}>
-                                                    <i class="zmdi zmdi-share zmdi-hc-fw"></i>
-                                                </button>
-                                                <div class="dropdown-menu menu-icons dropdown-menu-right share-dropdown" x-placement="bottom-start">
-                                                    <li>
-                                                        <FacebookShareButton url={window.location.href} className="share-btn">
-                                                            <FacebookIcon size={24} round={true} />
-                                                            <span>Share on Facebook</span>
-                                                        </FacebookShareButton>
-                                                    </li>
-                                                    <li>
-                                                        <TwitterShareButton url={window.location.href} className="share-btn">
-                                                            <TwitterIcon size={24} round={true} />
-                                                            <span>Share in Twitter</span>
-                                                        </TwitterShareButton>
-                                                    </li>
-                                                    <li>
-                                                        <TelegramShareButton url={window.location.href} className="share-btn">
-                                                            <TelegramIcon size={24} round={true} />
-                                                            <span>Share in Telegram</span>
-                                                        </TelegramShareButton>
-                                                    </li>
-                                                    <li>
-                                                        <WhatsappShareButton url={window.location.href} className="share-btn">
-                                                            <WhatsappIcon size={24} round={true} />
-                                                            <span>Share in Whatsapp</span>
-                                                        </WhatsappShareButton>
-                                                    </li>
+                                    <section className="m-b-10 d-flex justify-content-between">
+                                        <div className="d-flex align-items-center">
+                                            <a href="#!">
+                                                <div className="rounded-image-container">
+                                                    <img alt="profile" src={this.state.owner.image_url ? this.state.owner.image_url : "/assets/img/default.jpg"} />
                                                 </div>
+                                            </a>
+                                            <div className="p-l-10 p-r-20 ">Owned by
+                                                <span className="msg-creator-name">{this.state.owner.username ? this.state.owner.username : " " + String(this.state.owner.address).substring(0, 6).toUpperCase()}</span>
                                             </div>
                                         </div>
-                                        <ReactTooltip />
-                                    </section>
-
-                                    <section className="m-b-10" style={{
-                                        "display": "flex",
-                                        "flexWrap": "wrap"
-                                    }}>
-                                        <a href="#!">
-                                            <div className="rounded-image-container">
-                                                <img alt="profile" src={this.state.owner.image_url ? this.state.owner.image_url : "/assets/img/default.jpg"} />
+                                        <section className="m-b-15">
+                                            <button type="button" className="btn btn-secondary item-function-btn" data-tip="Refesh Metadata" onClick={() => this.retrieveData()}>
+                                                <i className="icon dripicons-clockwise"></i>
+                                            </button>
+                                            <button type="button"
+                                                class="btn btn-secondary dropdown item-function-btn"
+                                                data-toggle="dropdown" aria-expanded="false" data-tip="Share"
+                                                style={{ "borderTopLeftRadius": "0px", "borderBottomLeftRadius": "0px" }}>
+                                                <i class="zmdi zmdi-share zmdi-hc-fw"></i>
+                                            </button>
+                                            <div class="dropdown-menu menu-icons dropdown-menu-right share-dropdown" x-placement="bottom-start">
+                                                <li>
+                                                    <FacebookShareButton url={window.location.href} className="share-btn">
+                                                        <FacebookIcon size={24} round={true} />
+                                                        <span>Share on Facebook</span>
+                                                    </FacebookShareButton>
+                                                </li>
+                                                <li>
+                                                    <TwitterShareButton url={window.location.href} className="share-btn">
+                                                        <TwitterIcon size={24} round={true} />
+                                                        <span>Share in Twitter</span>
+                                                    </TwitterShareButton>
+                                                </li>
+                                                <li>
+                                                    <TelegramShareButton url={window.location.href} className="share-btn">
+                                                        <TelegramIcon size={24} round={true} />
+                                                        <span>Share in Telegram</span>
+                                                    </TelegramShareButton>
+                                                </li>
+                                                <li>
+                                                    <WhatsappShareButton url={window.location.href} className="share-btn">
+                                                        <WhatsappIcon size={24} round={true} />
+                                                        <span>Share in Whatsapp</span>
+                                                    </WhatsappShareButton>
+                                                </li>
                                             </div>
-                                        </a>
-                                        <p className="p-l-10 p-r-20">Owned by
-                                            <a href="#!">{this.state.owner.username ? this.state.owner.username : String(this.state.owner.address).substring(0, 6).toUpperCase()}</a>
-                                        </p>
+                                            <ReactTooltip />
+                                        </section>
                                     </section>
                                     {this.state.item.listed &&
                                         <div className="card">
