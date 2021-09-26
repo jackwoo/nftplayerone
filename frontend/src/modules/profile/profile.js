@@ -32,13 +32,19 @@ class Profile extends Component {
                 window.location.replace("/");
             }
         })
-        if(this.props.newUser){
-            this.setState({
-                showProfile: true
-            })
-        }
         this.getProfile();
+		this.checkNewuser();
     }
+
+	checkNewuser() {
+		if(this.props.props){
+			if (new URLSearchParams(this.props.props.location.search).get("newuser")) {
+				this.setState({
+					showProfile: true
+				})
+			}
+		}
+	}
 
 
     getProfile() {
@@ -84,7 +90,7 @@ class Profile extends Component {
 		}).catch(e => {
 			console.log(e);
 		})
-		window.location.reload();
+		window.location.replace(window.location.pathname);
 	}
 
 	handleChange(field, e) {

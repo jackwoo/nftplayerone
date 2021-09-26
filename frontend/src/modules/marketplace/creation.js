@@ -32,7 +32,7 @@ class Creation extends Component {
 	}
 
 	getProfile(address) {
-		UserModel.profile(address).then(res => {
+		UserModel.activiy(address).then(res => {
 			this.setState({
 				creations: res.data.nft
 			})

@@ -6,16 +6,13 @@ import {
 } from "../../libs/interact";
 import CreateNFT from "../marketplace/create";
 import Profile from "../profile/profile";
-import { Modal } from "react-bootstrap";
 
 class Marketplace extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			collections: [],
-			connected: false,
-			fields: {},
-			newUser: false
+			connected: false
 		}
 	}
 
@@ -36,15 +33,6 @@ class Marketplace extends Component {
 				})
 			})
 		})
-		this.checkNewuser();
-	}
-
-	checkNewuser() {
-		if (new URLSearchParams(this.props.location.search).get("newuser")) {
-			this.setState({
-				newUser: true
-			})
-		}
 	}
 
 	renderMsg() {
@@ -109,7 +97,7 @@ class Marketplace extends Component {
 								</div>
 								<div className="col-sm-12 col-md-12 col-lg-4 col-xl-4 col-xxl-4">
 									<div className="row">
-										<Profile newUser={this.state.newUser}/>
+										<Profile props={this.props}/>
 									</div>
 								</div>
 							</div>

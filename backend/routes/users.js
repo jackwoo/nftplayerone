@@ -57,7 +57,6 @@ router.post('/connect', async (req, res) => {
         let data = {
             "token": accessToken,
             "refreshToken": refreshToken,
-            "newUser": true
         }
         if (isNew) {
             data["newUser"] = true;
