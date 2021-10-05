@@ -62,24 +62,24 @@ contract NFT is ERC721URIStorage, ReentrancyGuard {
         _setTokenURI(newId, tokenURI);
         _creators[newId] = msg.sender;
 
-        return newId;
-
         emit Mint(
-            tokenId,
+            newId,
             msg.sender,
             tokenURI,
             block.timestamp
-        )
+        );
+
+        return newId;
     }
 
     function verify(address creator) public onlyAdmin {
-        require (!hasVerified(creator));
+        require (!isVerified(creator));
         _verified[creator] = true;
 
         emit Verification(
             creator,
             msg.sender,
             block.timestamp
-        )
+        );
     }
 }

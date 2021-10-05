@@ -12,12 +12,13 @@ contract Market is ReentrancyGuard {
     struct ListingInfo {
         uint256 price;
         address owner;
-        bool onList;
     }
 
     address private _admin;
 
-    mapping (uint256 => ListingInfo) private _listings;
+    mapping (uint256 => ListingInfo) private _listingInfos;
+
+    mapping (uint256 => bool) private _listings;
 
     mapping (address => bool) private _nftContracts;
 
@@ -39,8 +40,9 @@ contract Market is ReentrancyGuard {
     }
 
     modifier onlyTokenOwner (uint256 tokenId) {
+        require (isListed(tokenId), "Invalid token");
         require (
-            _listings[tokenId].owner == msg.sender, 
+            _listingInfos[tokenId].owner == msg.sender, 
             "Only token owner can call this function"
         );
         _;
@@ -102,12 +104,12 @@ contract Market is ReentrancyGuard {
     );
 
     function isListed(uint256 tokenId) public view returns (bool) {
-        return _listings[tokenId].onList;
+        return _listings[tokenId];
     }
 
     function priceOf(uint256 tokenId) public view returns (uint256) {
         require (isListed(tokenId), "Token not listed");
-        return _listings[tokenId].price;
+        return _listingInfos[tokenId].price;
     }
 
     function rewardOf(address creator) public view returns (uint256) {
@@ -133,7 +135,8 @@ contract Market is ReentrancyGuard {
                 "Token not approved to market");
 
         nft.transferFrom(msg.sender, address(this), tokenId);
-        _listings[tokenId] = ListingInfo(price, msg.sender, true);
+        _listingInfos[tokenId] = ListingInfo(price, msg.sender);
+        _listings[tokenId] = true;
 
         emit Listing(
             tokenId,
@@ -148,10 +151,8 @@ contract Market is ReentrancyGuard {
         onlyRegisteredNFTContract(nftAddr) 
         onlyTokenOwner(tokenId) 
     {
-        require (isListed(tokenId), "Invalid token");
-
         INFT(nftAddr).safeTransferFrom(address(this), msg.sender, tokenId);
-        _listings[tokenId].onList = false;
+        _listings[tokenId] = false;
 
         emit Cancellation(
             tokenId,
@@ -166,10 +167,9 @@ contract Market is ReentrancyGuard {
         onlyTokenOwner(tokenId) 
     {
         require (price > 0, "Invalid price");
-        require (isListed(tokenId), "Invalid token");
 
-        uint256 oldPrice = _listings[tokenId].price;
-        _listings[tokenId].price = price;
+        uint256 oldPrice = _listingInfos[tokenId].price;
+        _listingInfos[tokenId].price = price;
 
         emit Edit(
             tokenId,
@@ -188,8 +188,7 @@ contract Market is ReentrancyGuard {
     {
         require (isListed(tokenId), "Invalid token");
 
-
-        address owner = _listings[tokenId].owner;
+        address owner = _listingInfos[tokenId].owner;
         require (owner != msg.sender, 
                 "Attempt to buy owned token");
 
@@ -204,7 +203,7 @@ contract Market is ReentrancyGuard {
         _feeBalance += price - payment - reward;
 
         nft.safeTransferFrom(address(this), msg.sender, tokenId);
-        _listings[tokenId].onList = false;
+        _listings[tokenId] = false;
 
         emit Purchase(
             tokenId,
