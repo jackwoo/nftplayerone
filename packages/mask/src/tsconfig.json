@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "rootDir": "./",
+    "outDir": "../dist/src/",
+    "tsBuildInfoFile": "../dist/legacy.tsbuildinfo",
+    "emitDeclarationOnly": true, //只生成声明文件
+    "lib": ["ES2021"] //用于指定要包含在编译中的库文件
+  },
+  "exclude": ["./","./**/*.json"],
+}
