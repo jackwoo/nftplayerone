@@ -1,5 +1,5 @@
 const HDWalletProvider = require('@truffle/hdwallet-provider');
-const mnemonic = {your mnemonic keys};
+// const mnemonic = {your mnemonic keys};
 /**
  * Use this file to configure your truffle project. It's seeded with some
  * common settings for different networks and features like migrations,
@@ -37,16 +37,16 @@ module.exports = {
       port: 7545,
       network_id:"*"
   	},
-    bscTestnet: {
-      provider: () => new HDWalletProvider(
-        mnemonic, 
-        'https://data-seed-prebsc-1-s1.binance.org:8545'
-      ),
-      network_id: 97,
-      networkCheckTimeout: 1000000,
-      timeoutBlocks: 200,
-      skipDryRun: true
-    }
+    // bscTestnet: {
+    //   provider: () => new HDWalletProvider(
+    //     mnemonic, 
+    //     'https://data-seed-prebsc-1-s1.binance.org:8545'
+    //   ),
+    //   network_id: 97,
+    //   networkCheckTimeout: 1000000,
+    //   timeoutBlocks: 200,
+    //   skipDryRun: true
+    // }
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal
