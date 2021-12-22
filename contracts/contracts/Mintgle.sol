@@ -14,6 +14,10 @@ contract Mintgle is ERC721, Ownable, ReentrancyGuard {
         uint256 amount;
     }
 
+    event Mint(uint256 tokenId, address creator, uint256 timestamp);
+    event Offer(uint256 tokenId, address buyer, uint256 amount, uint256 timestamp);
+    event Transfer(uint256 tokenId, address from, address to, uint256 amount, uint256 timestamp);
+
     address private _signer;
     mapping (uint256 => address) private _creators;
     mapping (uint256 => Offerer) private _offers;
@@ -32,20 +36,8 @@ contract Mintgle is ERC721, Ownable, ReentrancyGuard {
         return _signer;
     }
 
-    // the following are for lazy minting
-    // struct Offer {
-    //     uint256 tid;
-    //     address owner;
-    //     uint256 amount;
-    //     address buyer;
-    //     bytes32 sigR;
-    //     bytes32 sigS;
-    //     uint8 sigV;
-    // }
     uint256 constant chainId = 1337;
     address constant verifyingContract = 0x1C56346CD2A2Bf3202F771f50d3D14a367B48070;
-    // bytes32 constant salt = 0xf2d857f4a3edcb9b78b4d503bfe733db1e3f6cdc2b7971ee739626c97e86a558;
-    // string private constant EIP712_DOMAIN = "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract,bytes32 salt)";
     bytes32 private constant DOMAIN_SEPARATOR = keccak256(abi.encode(
         keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
         keccak256("Mintgle"),
@@ -53,39 +45,6 @@ contract Mintgle is ERC721, Ownable, ReentrancyGuard {
         chainId,
         verifyingContract
     ));
-
-    // function hashOffer1(Offer memory offer) private pure returns (bytes32){
-    //     return keccak256(abi.encode(
-    //             keccak256("Offer(uint256 tid,address owner,uint256 amount,address buyer)"),
-    //             offer.tid, offer.owner, offer.amount, offer.buyer
-    //         ));
-    // }
-
-    // function hashOffer2(Offer memory offer) private pure returns (bytes32){
-    //     return keccak256(abi.encodePacked(
-    //         "\x19\x01",
-    //     DOMAIN_SEPARATOR,
-    //     keccak256(abi.encode(
-    //             keccak256("Offer(uint256 tid,address owner,uint256 amount,address buyer,bytes32 sigR,bytes32 sigS,uint8 sigV)"),
-    //             offer.tid, offer.owner, offer.amount, offer.buyer, offer.sigR, offer.sigS, offer.sigV
-    //         ))
-    //     ));
-    // }
-
-    // function accept2(Offer memory offer, bytes32 r, bytes32 s, uint8 v) public {
-
-    //     // validate offer
-    //     require(ecrecover(hashOffer1(offer), offer.sigV, offer.sigR, offer.sigS) == _signer, "Wrong signature");
-
-    //     require(ecrecover(hashOffer2(offer), v, r, s) == offer.buyer, "Wrong buyer");
-
-    //     require(msg.sender == offer.owner, "Wrong owner");
-
-    //     // mint if not minted
-
-    //     // transfer weth to creator
-
-    // }
 
     function creatorOf(uint256 tokenId) public view returns (address){
         return _creators[tokenId];
@@ -108,6 +67,7 @@ contract Mintgle is ERC721, Ownable, ReentrancyGuard {
         offer.amount = msg.value;
         offer.buyer = msg.sender;
         _offers[tokenId] = offer;
+        emit Offer(tokenId, offer.buyer, offer.amount, block.timestamp);
     }
 
     function acceptOffer(uint256 tokenId) public nonReentrant {
@@ -161,8 +121,9 @@ contract Mintgle is ERC721, Ownable, ReentrancyGuard {
         ERC721.safeTransferFrom(owner, offer.buyer, tokenId);
  
         // send payment to owner and creator
-        uint256 payment = offer.amount * 19 / 20;
-        uint256 reward = offer.amount * 3 / 100;
+        uint256 amount = offer.amount;
+        uint256 payment = amount * 19 / 20;
+        uint256 reward = amount * 3 / 100;
         if(owner != address(0)){
             Address.sendValue(payable(owner), payment);
         }
@@ -174,11 +135,13 @@ contract Mintgle is ERC721, Ownable, ReentrancyGuard {
         offer.amount = 0;
         offer.buyer = address(0);
         _offers[tokenId] = offer;
+        emit Transfer(tokenId, owner, offer.buyer, amount, block.timestamp);
     }
 
     function _mintgle(address creator, uint256 tokenId) internal {
         _safeMint(creator, tokenId);
         _creators[tokenId] = creator;
+        emit Mint(tokenId, creator, block.timestamp);
     }
 
     function testMint(uint256 tokenId) public nonReentrant {
