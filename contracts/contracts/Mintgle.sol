@@ -3,48 +3,35 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract Mintgle is ERC721, Ownable, ReentrancyGuard {
+contract Mintgle is ERC721URIStorage, Ownable, ReentrancyGuard {
     using Address for address;
+    using Counters for Counters.Counter;
+
+    Counters.Counter private _tokenIds;
 
     struct Offerer {
         address buyer;
         uint256 amount;
     }
 
-    event Mint(uint256 tokenId, address creator, uint256 timestamp);
-    event Offer(uint256 tokenId, address buyer, uint256 amount, uint256 timestamp);
-    event Transfer(uint256 tokenId, address from, address to, uint256 amount, uint256 timestamp);
+    event Mint(uint256 indexed tokenId, address indexed creator, string tokenURI, uint256 price, uint256 timestamp);
+    event ChangePrice(uint256 indexed tokenId, uint256 price, uint256 timestamp);
+    event Offer(uint256 indexed tokenId, address indexed buyer, uint256 amount, uint256 timestamp);
+    event Transfer(uint256 indexed tokenId, address indexed from, address indexed to, uint256 amount, uint256 timestamp);
 
-    address private _signer;
     mapping (uint256 => address) private _creators;
+    mapping (uint256 => uint256) private _prices;
     mapping (uint256 => Offerer) private _offers;
 
-    constructor(address signer)
+    constructor()
     ERC721("Mintgle", "MTGL")
     {
-        _signer = signer;
     }
-
-    function setSigner(address signer) public onlyOwner {
-        _signer = signer;
-    }
-
-    function getSigner() public view returns (address) {
-        return _signer;
-    }
-
-    uint256 constant chainId = 1337;
-    address constant verifyingContract = 0x1C56346CD2A2Bf3202F771f50d3D14a367B48070;
-    bytes32 private constant DOMAIN_SEPARATOR = keccak256(abi.encode(
-        keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
-        keccak256("Mintgle"),
-        keccak256("2"),
-        chainId,
-        verifyingContract
-    ));
 
     function creatorOf(uint256 tokenId) public view returns (address){
         return _creators[tokenId];
@@ -55,6 +42,8 @@ contract Mintgle is ERC721, Ownable, ReentrancyGuard {
     }
 
     function makeOffer(uint256 tokenId) public payable nonReentrant{
+        require(_creators[tokenId] != address(0), "NFT has not been minted");
+
         Offerer memory offer = offerFor(tokenId);
         require(msg.value > offer.amount, "offer amount must be larger than current offer");
 
@@ -71,7 +60,7 @@ contract Mintgle is ERC721, Ownable, ReentrancyGuard {
     }
 
     function acceptOffer(uint256 tokenId) public nonReentrant {
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "caller is not owner nor approved");
         
         // check offer exists
         Offerer memory offer = offerFor(tokenId);
@@ -81,36 +70,40 @@ contract Mintgle is ERC721, Ownable, ReentrancyGuard {
         _processOffer(offer, tokenId);
     }
 
-    function mintAndSell(uint256 tokenId, uint256 nonce, bytes32 r, bytes32 s, uint8 v) public nonReentrant {
-        // mint the token and get payment, this is siimlar to accept except the token has not been minted
+    function mintgle(string memory tokenURI, uint256 price) public nonReentrant returns (uint256) {
+        _tokenIds.increment();
 
-        // verify the sender
-        bytes32 hashed = _hashVoucher(tokenId, msg.sender, nonce);
-        require(ecrecover(hashed, v, r, s) == _signer, "Wrong signature");
+        uint256 tokenId = _tokenIds.current();
+        _safeMint(msg.sender, tokenId);
+        _setTokenURI(tokenId, tokenURI);
+        _creators[tokenId] = msg.sender;
+        _prices[tokenId] = price;
 
-        // verify that token has not been minted
-        require(creatorOf(tokenId) == address(0), "Token has been minted.");
-
-        // verify offer exists
-        Offerer memory offer = offerFor(tokenId);
-        require(offer.amount > 0, "no offer exists");
-
-        // mint it
-        _mintgle(msg.sender, tokenId);
-
-        // transfer
-        _processOffer(offer, tokenId);
+        emit Mint(tokenId, msg.sender, tokenURI, price, block.timestamp);
+        return tokenId;
     }
 
-    function _hashVoucher(uint256 tokenId, address creator, uint256 nonce) private pure returns (bytes32){
-        return keccak256(abi.encodePacked(
-            "\x19\x01",
-        DOMAIN_SEPARATOR,
-        keccak256(abi.encode(
-                keccak256("Voucher(uint256 tokenId,address creator,uint256 nonce)"),
-                tokenId, creator, nonce
-            ))
-        ));
+    function setPrice(uint256 tokenId, uint256 price) public nonReentrant {
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "caller is not owner nor approved");
+
+        _prices[tokenId] = price;
+        emit ChangePrice(tokenId, price, block.timestamp);
+    }
+
+    function getPrice(uint256 tokenId) public view returns (uint256) {
+        return _prices[tokenId];
+    }
+
+    function buy(uint256 tokenId) public payable nonReentrant {
+        require(_creators[tokenId] != address(0), "NFT has not been minted");
+        require(_prices[tokenId] > 0, "NFT does not have a fixed price.");
+        require(msg.value >= _prices[tokenId], "Value is not enough to pay for the price");
+
+        Offerer memory offer;
+        offer.amount = msg.value;
+        offer.buyer = msg.sender;
+
+        _processOffer(offer, tokenId);
     }
 
     function _processOffer(Offerer memory offer, uint256 tokenId) internal {
@@ -135,16 +128,7 @@ contract Mintgle is ERC721, Ownable, ReentrancyGuard {
         offer.amount = 0;
         offer.buyer = address(0);
         _offers[tokenId] = offer;
+        _prices[tokenId] = 0;
         emit Transfer(tokenId, owner, offer.buyer, amount, block.timestamp);
-    }
-
-    function _mintgle(address creator, uint256 tokenId) internal {
-        _safeMint(creator, tokenId);
-        _creators[tokenId] = creator;
-        emit Mint(tokenId, creator, block.timestamp);
-    }
-
-    function testMint(uint256 tokenId) public nonReentrant {
-        _mintgle(msg.sender, tokenId);
     }
 }
